@@ -17,9 +17,9 @@ const Sidebar = () => {
               </Link>
             </li>
             <li className="nav-item">
-              <Link to="/blank" className="nav-link">
+              <Link to="/data" className="nav-link">
                 <i className="nav-icon fas fa-file"></i>
-                <p>Blank</p>
+                <p>Data</p>
               </Link>
             </li>
           </ul>
