@@ -17,7 +17,6 @@ const Layout = () => {
       </div>
       <Footer />
       
-      {/* ToastContainer di sini agar berlaku global untuk semua page */}
       <ToastContainer position="top-right" autoClose={3000} />
     </div>
   );
