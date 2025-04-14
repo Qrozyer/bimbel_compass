@@ -4,15 +4,15 @@ import { toast } from 'react-toastify';
 import axios from 'axios';
 const baseURL = process.env.REACT_APP_BASE_URL;
 
-const Data = () => {
-  const [mapel, setMapel] = useState([]);
+const Bidang = () => {
+  const [bidang, setBidang] = useState([]);
 
   // Ambil data dari API saat komponen pertama kali dirender
   useEffect(() => {
-    fetchMapel();
+    fetchBidang();
   }, []);
 
-  const fetchMapel = async () => {
+  const fetchBidang = async () => {
     try {
       const token = sessionStorage.getItem('token');
   
@@ -22,10 +22,10 @@ const Data = () => {
         },
       });
   
-      setMapel(response.data);
+      setBidang(response.data);
     } catch (error) {
       console.error('Gagal fetch data:', error.response ? error.response.data : error.message);
-      toast.error('Gagal mengambil data mapel! Pastikan token valid.');
+      toast.error('Gagal mengambil data bidang! Pastikan token valid.');
     }
   };
 
@@ -33,25 +33,25 @@ const Data = () => {
     Swal.fire({
       title: 'Tambah Mata Pelajaran',
       html: `
-        <input id="swal-input-nama" class="swal2-input" placeholder="Nama Mapel" />
-        <input id="swal-input-kategori" class="swal2-input" placeholder="Kategori" />
+        <input id="swal-input-BidangNama" class="swal2-input" placeholder="Nama Bidang" />
+        <input id="swal-input-BidangKeterangan" class="swal2-input" placeholder="Keterangan" />
       `,
       focusConfirm: false,
       preConfirm: () => {
-        const nama = document.getElementById('swal-input-nama').value;
-        const kategori = document.getElementById('swal-input-kategori').value;
+        const BidangNama = document.getElementById('swal-input-BidangNama').value;
+        const BidangKeterangan = document.getElementById('swal-input-BidangKeterangan').value;
   
         // Pastikan kedua field diisi
-        if (!nama || !kategori) {
+        if (!BidangNama || !BidangKeterangan) {
           toast.error('Semua field harus diisi!');
           return false; // Menghentikan form jika data tidak valid
         }
   
-        return { nama, kategori }; // Mengembalikan data valid dari form
+        return { BidangNama, BidangKeterangan }; // Mengembalikan data valid dari form
       },
     }).then((result) => {
       if (result.isConfirmed) {
-        const { nama, kategori } = result.value; // Ambil data yang diinputkan
+        const { BidangNama, BidangKeterangan } = result.value; // Ambil data yang diinputkan
   
         const token = sessionStorage.getItem('token');
         if (!token) {
@@ -63,7 +63,7 @@ const Data = () => {
         axios
           .post(
             `${baseURL}/bidang`,
-            { nama, kategori }, // Data yang akan ditambahkan
+            { BidangNama, BidangKeterangan }, // Data yang akan ditambahkan
             {
               headers: {
                 Authorization: `Bearer ${token}`, // Sertakan token di header
@@ -73,9 +73,9 @@ const Data = () => {
           .then((response) => {
             toast.success(response.data.message || 'Data berhasil ditambahkan!');
             
-            // Update state mapel dengan data yang baru ditambahkan
-            const newMapel = { id: response.data.id, nama, kategori };
-            setMapel((prevMapel) => [...prevMapel, newMapel]);
+            // Update state Bidang dengan data yang baru ditambahkan
+            const newBidang = { id: response.data.id, BidangNama, BidangKeterangan };
+            setBidang((prevBidang) => [...prevBidang, newBidang]);
   
             // Menutup SweetAlert setelah berhasil
             Swal.fire({
@@ -98,25 +98,25 @@ const Data = () => {
     Swal.fire({
       title: 'Edit Mata Pelajaran',
       html: `
-        <input id="swal-input-nama" class="swal2-input" placeholder="Nama Mapel" value="${item.nama}" />
-        <input id="swal-input-kategori" class="swal2-input" placeholder="Kategori" value="${item.kategori}" />
+        <input id="swal-input-BidangNama" class="swal2-input" placeholder="Nama Bidang" value="${item.BidangNama}" />
+        <input id="swal-input-BidangKeterangan" class="swal2-input" placeholder="Keterangan" value="${item.BidangKeterangan}" />
       `,
       focusConfirm: false,
       preConfirm: () => {
-        const nama = document.getElementById('swal-input-nama').value;
-        const kategori = document.getElementById('swal-input-kategori').value;
+        const BidangNama = document.getElementById('swal-input-BidangNama').value;
+        const BidangKeterangan = document.getElementById('swal-input-BidangKeterangan').value;
   
         // Pastikan kedua field diisi
-        if (!nama || !kategori) {
+        if (!BidangNama || !BidangKeterangan) {
           toast.error('Semua field harus diisi!');
           return false;
         }
   
-        return { id: item.id, nama, kategori }; // Mengembalikan data yang diedit
+        return { BidangId: item.BidangId, BidangNama, BidangKeterangan }; // Mengembalikan data yang diedit
       },
     }).then((result) => {
       if (result.isConfirmed) {
-        const { id, nama, kategori } = result.value; // Ambil data yang diedit
+        const { BidangId, BidangNama, BidangKeterangan } = result.value; // Ambil data yang diedit
   
         const token = sessionStorage.getItem('token');
         if (!token) {
@@ -127,8 +127,8 @@ const Data = () => {
         // Kirim data yang sudah diubah ke server menggunakan axios
         axios
           .put(
-            `${baseURL}/bidang/${id}`,
-            { nama, kategori }, // Data yang akan diperbarui
+            `${baseURL}/bidang/${BidangId}`,
+            { BidangNama, BidangKeterangan }, // Data yang akan diperbarui
             {
               headers: {
                 Authorization: `Bearer ${token}`, // Sertakan token di header
@@ -138,10 +138,10 @@ const Data = () => {
           .then((response) => {
             toast.success(response.data.message || 'Data berhasil diperbarui!');
             
-            // Update state mapel dengan data yang sudah diperbarui
-            setMapel((prevMapel) =>
-              prevMapel.map((item) =>
-                item.id === id ? { ...item, nama, kategori } : item
+            // Update state Bidang dengan data yang sudah diperbarui
+            setBidang((prevBidang) =>
+              prevBidang.map((item) =>
+                item.BidangId === BidangId ? { ...item, BidangNama, BidangKeterangan } : item
               )
             );
   
@@ -161,7 +161,7 @@ const Data = () => {
   };
   
 
-  const handleDelete = (id) => {
+  const handleDelete = (BidangId) => {
     Swal.fire({
       title: 'Yakin ingin menghapus?',
       text: 'Data yang dihapus tidak bisa dikembalikan!',
@@ -182,17 +182,17 @@ const Data = () => {
   
         // Mengirim permintaan DELETE ke backend
         axios
-          .delete(`${baseURL}/bidang/${id}`, {
+          .delete(`${baseURL}/bidang/${BidangId}`, {
             headers: {
               Authorization: `Bearer ${token}`, // Sertakan token untuk otentikasi
             },
           })
           .then((response) => {
             // Ambil pesan dari response API
-            const message = response.data.message || `Data dengan ID ${id} berhasil dihapus!`;
+            const message = response.data.message || `Data dengan ID ${BidangId} berhasil dihapus!`;
   
             // Menghapus data dari state setelah berhasil dihapus dari server
-            setMapel(mapel.filter((item) => item.id !== id));
+            setBidang(bidang.filter((item) => item.BidangId !== BidangId));
   
             // Menampilkan pesan sukses menggunakan Swal dan toast
             Swal.fire(message, '', 'success');
@@ -200,7 +200,7 @@ const Data = () => {
           })
           .catch((error) => {
             // Ambil pesan dari response error API
-            const errorMessage = error.response?.data?.message || 'Gagal menghapus data mapel!';
+            const errorMessage = error.response?.data?.message || 'Gagal menghapus data Bidang!';
             console.error('Gagal menghapus data:', error);
             toast.error(errorMessage); // Menampilkan toast dengan pesan error dari API
           });
@@ -214,10 +214,10 @@ const Data = () => {
   return (
     <div className="content pt-3 px-4">
       <div className="container-fluid">
-        <h3 className="mb-4">Data</h3>
+        <h3 className="mb-4">Daftar Bidang</h3>
 
         <button className="btn btn-success mb-3" onClick={handleAddData}>
-          Tambah Data
+          Tambah Data Bidang
         </button>
 
 
@@ -226,17 +226,17 @@ const Data = () => {
             <thead className="thead-dark">
               <tr>
                 <th>No</th>
-                <th>Nama Mapel</th>
-                <th>Kategori</th>
+                <th>Nama Bidang</th>
+                <th>Keterangan</th>
                 <th>Aksi</th>
               </tr>
             </thead>
             <tbody>
-              {mapel.map((item, index) => (
-                <tr key={item.id}>
+              {bidang.map((item, index) => (
+                <tr key={item.BidangId}>
                   <td>{index + 1}</td>
-                  <td>{item.nama}</td>
-                  <td>{item.kategori}</td>
+                  <td>{item.BidangNama}</td>
+                  <td>{item.BidangKeterangan}</td>
                   <td>
                     <button   
                       className="btn btn-warning btn-sm me-2"
@@ -246,17 +246,17 @@ const Data = () => {
                     </button>
                     <button
                       className="btn btn-danger btn-sm"
-                      onClick={() => handleDelete(item.id)}
+                      onClick={() => handleDelete(item.BidangId)}
                     >
                       <i className="fas fa-trash"></i> Hapus
                     </button>
                   </td>
                 </tr>
               ))}
-              {mapel.length === 0 && (
+              {bidang.length === 0 && (
                 <tr>
                   <td colSpan="4" className="text-center">
-                    Data tidak tersedia.
+                    List Bidang tidak tersedia.
                   </td>
                 </tr>
               )}
@@ -268,4 +268,4 @@ const Data = () => {
   );
 };
 
-export default Data;
+export default Bidang;

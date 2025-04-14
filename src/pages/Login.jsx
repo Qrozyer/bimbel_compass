@@ -1,25 +1,60 @@
 // src/pages/Login.jsx
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
+import { useDispatch } from 'react-redux';
+const baseURL = process.env.REACT_APP_BASE_URL;
 
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
+  const [token, setToken] = useState('');
   const navigate = useNavigate();
+  const dispatch = useDispatch();
+
+  useEffect(() => {
+    const fetchToken = async () => {
+      try {
+        // Mengirim request GET untuk mengambil token
+        const res = await axios.get(`${baseURL}/token`, {
+          headers: {
+            'Content-Type': 'application/json',
+            'x-username': 'test',
+            'x-password': 'testing',
+          },
+        });
+
+        //Menyimpan token yang diterima dari response API 
+        setToken(res.data.token);
+      } catch (error) {
+        //menangani error jika token tidak berhasil diambil
+        console.error('Error:', error);
+        toast.error('Gagal mengambil token');
+      }
+    };
+
+    //memanggil fungsi fetchToken saat komponen pertama kali dimuat
+    fetchToken();
+  }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post('http://localhost:3000/login', {
-        username,
-        password,
+      const res = await axios.post(`${baseURL}/login/admin`, {
+        username : username,
+        password : password,
+      },
+      {
+        headers: {
+          Authorization: token, // Menggunakan token yang diambil sebelumnya
+        }
       });
+
 
       // Tampilkan pesan dari response
       toast.success(res.data.message || 'Login berhasil!');
-      sessionStorage.setItem('token', res.data.token);
+      sessionStorage.setItem('token', token);
       navigate('/');
     } catch (error) {
       const msg = error.response?.data?.message || 'Login gagal!';

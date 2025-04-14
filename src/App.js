@@ -11,6 +11,7 @@ import Data from './pages/Data';
 import NotFound from './pages/NotFound';
 import Login from './pages/Login';
 import Register from './pages/Register';
+import Bidang from './pages/Bidang';
 
 function App() {
   return (
@@ -23,6 +24,7 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
+            <Route path="/bidang" element={<Bidang />} />
             <Route path="/data" element={<Data />} />
             <Route path="*" element={<NotFound />} />
           </Route>

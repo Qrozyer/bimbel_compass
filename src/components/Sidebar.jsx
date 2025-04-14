@@ -1,5 +1,6 @@
 import React from 'react';
 import { Link } from 'react-router-dom';
+const baseURL = process.env.REACT_APP_BASE_URL;
 
 const Sidebar = () => {
   return (
@@ -20,6 +21,12 @@ const Sidebar = () => {
               <Link to="/data" className="nav-link">
                 <i className="nav-icon fas fa-file"></i>
                 <p>Data</p>
+              </Link>
+            </li>
+            <li className="nav-item">
+              <Link to="/bidang" className="nav-link">
+                <i className="nav-icon fas fa-file"></i>
+                <p>Bidang</p>
               </Link>
             </li>
           </ul>

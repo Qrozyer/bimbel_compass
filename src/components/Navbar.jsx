@@ -2,6 +2,7 @@ import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import axios from 'axios';
 import { toast } from 'react-toastify';
+const baseURL = process.env.REACT_APP_BASE_URL;
 
 function Navbar() {
   const navigate = useNavigate();
@@ -10,7 +11,7 @@ function Navbar() {
   const handleLogout = async () => {
     try {
       // Mengirim request ke backend untuk logout
-      await axios.get('http://localhost:3000/logout')
+      await axios.get(`${baseURL}/logout`)
 
       // Menghapus token di sessionStorage
       sessionStorage.removeItem('token');
