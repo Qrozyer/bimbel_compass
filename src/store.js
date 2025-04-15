@@ -1,26 +1,7 @@
-import {createStore} from 'redux';
+import { createStore } from 'redux';
+import rootReducer from './reducers'; // Import rootReducer yang sudah digabungkan
 
-// State awal aplikasi
-const initialState = {
-    user: "-",
-    email: "-",
-    nama: "-",
-    isAuthenticated: false,
-};
-
-// Reducer untuk mengelola state
-function appReducer(state = initialState, action) {
-    switch (action.type) {
-        case 'SET USER':
-            return { ...state, user: action.payload, isAuthenticated: true };
-        case 'LOGOUT':
-            return { ...state, user: null, isAuthenticated: false };
-        default:
-            return state;
-    }
-}
-
-// Membuat store Redux
-const store = createStore(appReducer);
+// Membuat store Redux dengan rootReducer
+const store = createStore(rootReducer);
 
 export default store;

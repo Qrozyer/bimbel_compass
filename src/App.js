@@ -7,7 +7,6 @@ import Layout from './components/Layout';
 import PrivateRoute from './components/PrivateRoute';
 
 import Dashboard from './pages/Dashboard';
-import Data from './pages/Data';
 import NotFound from './pages/NotFound';
 import Login from './pages/Login';
 import Register from './pages/Register';
@@ -24,8 +23,7 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
-            <Route path="/bidang" element={<Bidang />} />
-            <Route path="/data" element={<Data />} />
+            <Route path="/bidang" element={<Bidang />} />            
             <Route path="*" element={<NotFound />} />
           </Route>
         </Route>

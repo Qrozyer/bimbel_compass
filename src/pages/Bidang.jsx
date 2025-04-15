@@ -1,13 +1,24 @@
-import React, { useEffect, useState } from 'react';
+import React, { useState, useEffect } from 'react';
+import { useDispatch, useSelector } from 'react-redux';
+import { addBidang, editBidang, setBidang } from '../actions/bidangActions';  // Import action creators
 import Swal from 'sweetalert2';
-import { toast } from 'react-toastify';
 import axios from 'axios';
+import { CKEditor } from '@ckeditor/ckeditor5-react';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { toast } from 'react-toastify'; // Import Toastify
+
 const baseURL = process.env.REACT_APP_BASE_URL;
 
 const Bidang = () => {
-  const [bidang, setBidang] = useState([]);
+  const dispatch = useDispatch();
+  const bidang = useSelector((state) => state.bidang.bidang); // Akses data bidang dari Redux state
 
-  // Ambil data dari API saat komponen pertama kali dirender
+  const [BidangNama, setBidangNama] = useState('');
+  const [editorData, setEditorData] = useState('');
+  const [editMode, setEditMode] = useState(false);
+  const [currentBidangId, setCurrentBidangId] = useState(null);
+  const [showForm, setShowForm] = useState(false); // State to control form visibility
+
   useEffect(() => {
     fetchBidang();
   }, []);
@@ -15,201 +26,110 @@ const Bidang = () => {
   const fetchBidang = async () => {
     try {
       const token = sessionStorage.getItem('token');
-  
       const response = await axios.get(`${baseURL}/bidang`, {
-        headers: {
-          Authorization: `Bearer ${token}`,
-        },
+        headers: { Authorization: `Bearer ${token}` },
       });
-  
-      setBidang(response.data);
+      dispatch(setBidang(response.data)); // Update Redux state dengan data terbaru
     } catch (error) {
-      console.error('Gagal fetch data:', error.response ? error.response.data : error.message);
-      toast.error('Gagal mengambil data bidang! Pastikan token valid.');
+      toast.error('Gagal mengambil data bidang!');
+    }
+  };
+
+  const handleSave = () => {
+    if (!BidangNama || !editorData) {
+      Swal.fire('Error', 'Semua field harus diisi!', 'error');
+      return;
+    }
+
+    const token = sessionStorage.getItem('token');
+    if (!token) {
+      Swal.fire('Error', 'Anda harus login terlebih dahulu!', 'error');
+      return;
+    }
+
+    const data = { BidangNama, BidangKeterangan: editorData };
+
+    if (editMode) {
+      axios
+        .put(`${baseURL}/bidang/${currentBidangId}`, data, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          fetchBidang(); // Memanggil fetchBidang untuk mendapatkan data terbaru
+          Swal.fire('Success', 'Data berhasil diperbarui.', 'success');
+          setShowForm(false); // Hide form after save
+        })
+        .catch((error) => {
+          // Assuming API returns an error message in "msg"
+          const errorMsg = error.response?.data?.msg || 'Gagal memperbarui data';
+          toast.error(errorMsg);
+        });
+    } else {
+      axios
+        .post(`${baseURL}/bidang`, data, {
+          headers: { Authorization: `Bearer ${token}` },
+        })
+        .then((response) => {
+          fetchBidang(); // Memanggil fetchBidang untuk mendapatkan data terbaru
+          Swal.fire('Success', 'Data berhasil ditambahkan.', 'success');
+          setShowForm(false); // Hide form after save
+        })
+        .catch((error) => {
+          // Assuming API returns an error message in "msg"
+          const errorMsg = error.response?.data?.msg || 'Gagal menambah data';
+          toast.error(errorMsg);
+        });
     }
   };
 
   const handleAddData = () => {
-    Swal.fire({
-      title: 'Tambah Mata Pelajaran',
-      html: `
-        <input id="swal-input-BidangNama" class="swal2-input" placeholder="Nama Bidang" />
-        <input id="swal-input-BidangKeterangan" class="swal2-input" placeholder="Keterangan" />
-      `,
-      focusConfirm: false,
-      preConfirm: () => {
-        const BidangNama = document.getElementById('swal-input-BidangNama').value;
-        const BidangKeterangan = document.getElementById('swal-input-BidangKeterangan').value;
-  
-        // Pastikan kedua field diisi
-        if (!BidangNama || !BidangKeterangan) {
-          toast.error('Semua field harus diisi!');
-          return false; // Menghentikan form jika data tidak valid
-        }
-  
-        return { BidangNama, BidangKeterangan }; // Mengembalikan data valid dari form
-      },
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const { BidangNama, BidangKeterangan } = result.value; // Ambil data yang diinputkan
-  
-        const token = sessionStorage.getItem('token');
-        if (!token) {
-          toast.error('Anda harus login terlebih dahulu!');
-          return;
-        }
-  
-        // Kirim data ke server menggunakan axios
-        axios
-          .post(
-            `${baseURL}/bidang`,
-            { BidangNama, BidangKeterangan }, // Data yang akan ditambahkan
-            {
-              headers: {
-                Authorization: `Bearer ${token}`, // Sertakan token di header
-              },
-            }
-          )
-          .then((response) => {
-            toast.success(response.data.message || 'Data berhasil ditambahkan!');
-            
-            // Update state Bidang dengan data yang baru ditambahkan
-            const newBidang = { id: response.data.id, BidangNama, BidangKeterangan };
-            setBidang((prevBidang) => [...prevBidang, newBidang]);
-  
-            // Menutup SweetAlert setelah berhasil
-            Swal.fire({
-              icon: 'success',
-              title: 'Berhasil!',
-              text: response.data.message || 'Data berhasil ditambahkan!',
-            });
-          })
-          .catch((error) => {
-            const errorMessage = error.response?.data?.message || 'Gagal menambah data!';
-            toast.error(errorMessage);
-          });
-      }
-    });
+    setShowForm(true);  // Show form when "Tambah Data Bidang" is clicked
+    setEditMode(false);  // Reset to add mode
+    setBidangNama('');
+    setEditorData('');
   };
-  
-  
 
   const handleEdit = (item) => {
-    Swal.fire({
-      title: 'Edit Mata Pelajaran',
-      html: `
-        <input id="swal-input-BidangNama" class="swal2-input" placeholder="Nama Bidang" value="${item.BidangNama}" />
-        <input id="swal-input-BidangKeterangan" class="swal2-input" placeholder="Keterangan" value="${item.BidangKeterangan}" />
-      `,
-      focusConfirm: false,
-      preConfirm: () => {
-        const BidangNama = document.getElementById('swal-input-BidangNama').value;
-        const BidangKeterangan = document.getElementById('swal-input-BidangKeterangan').value;
-  
-        // Pastikan kedua field diisi
-        if (!BidangNama || !BidangKeterangan) {
-          toast.error('Semua field harus diisi!');
-          return false;
-        }
-  
-        return { BidangId: item.BidangId, BidangNama, BidangKeterangan }; // Mengembalikan data yang diedit
-      },
-    }).then((result) => {
-      if (result.isConfirmed) {
-        const { BidangId, BidangNama, BidangKeterangan } = result.value; // Ambil data yang diedit
-  
-        const token = sessionStorage.getItem('token');
-        if (!token) {
-          toast.error('Anda harus login terlebih dahulu!');
-          return;
-        }
-  
-        // Kirim data yang sudah diubah ke server menggunakan axios
-        axios
-          .put(
-            `${baseURL}/bidang/${BidangId}`,
-            { BidangNama, BidangKeterangan }, // Data yang akan diperbarui
-            {
-              headers: {
-                Authorization: `Bearer ${token}`, // Sertakan token di header
-              },
-            }
-          )
-          .then((response) => {
-            toast.success(response.data.message || 'Data berhasil diperbarui!');
-            
-            // Update state Bidang dengan data yang sudah diperbarui
-            setBidang((prevBidang) =>
-              prevBidang.map((item) =>
-                item.BidangId === BidangId ? { ...item, BidangNama, BidangKeterangan } : item
-              )
-            );
-  
-            // Menutup SweetAlert setelah berhasil
-            Swal.fire({
-              icon: 'success',
-              title: 'Berhasil!',
-              text: response.data.message || 'Data berhasil diperbarui!',
-            });
-          })
-          .catch((error) => {
-            const errorMessage = error.response?.data?.message || 'Gagal memperbarui data!';
-            toast.error(errorMessage);
-          });
-      }
-    });
+    setBidangNama(item.BidangNama);
+    setEditorData(item.BidangKeterangan);
+    setCurrentBidangId(item.BidangId);
+    setEditMode(true);  // Switch to edit mode
+    setShowForm(true);  // Show form when editing
   };
-  
 
-  const handleDelete = (BidangId) => {
+  const handleDelete = (id) => {
     Swal.fire({
-      title: 'Yakin ingin menghapus?',
+      title: 'Apakah Anda yakin?',
       text: 'Data yang dihapus tidak bisa dikembalikan!',
       icon: 'warning',
-      iconColor: '#dc3545',
       showCancelButton: true,
-      confirmButtonText: 'Ya, hapus!',
-      confirmButtonColor: '#dc3545',
+      confirmButtonText: 'Hapus',
       cancelButtonText: 'Batal',
     }).then((result) => {
       if (result.isConfirmed) {
-        const token = sessionStorage.getItem('token'); // Ambil token dari sessionStorage
-  
+        const token = sessionStorage.getItem('token');
         if (!token) {
           toast.error('Anda harus login terlebih dahulu!');
           return;
         }
-  
-        // Mengirim permintaan DELETE ke backend
+
         axios
-          .delete(`${baseURL}/bidang/${BidangId}`, {
-            headers: {
-              Authorization: `Bearer ${token}`, // Sertakan token untuk otentikasi
-            },
+          .delete(`${baseURL}/bidang/${id}`, {
+            headers: { Authorization: `Bearer ${token}` },
           })
           .then((response) => {
-            // Ambil pesan dari response API
-            const message = response.data.message || `Data dengan ID ${BidangId} berhasil dihapus!`;
-  
-            // Menghapus data dari state setelah berhasil dihapus dari server
-            setBidang(bidang.filter((item) => item.BidangId !== BidangId));
-  
-            // Menampilkan pesan sukses menggunakan Swal dan toast
-            Swal.fire(message, '', 'success');
-            toast.success(message); // Menampilkan toast dengan pesan dari API
+            // Remove the deleted item from the state (Redux)
+            dispatch(setBidang(bidang.filter((item) => item.BidangId !== id)));
+            Swal.fire('Terhapus!', 'Data bidang telah dihapus.', 'success');
           })
           .catch((error) => {
-            // Ambil pesan dari response error API
-            const errorMessage = error.response?.data?.message || 'Gagal menghapus data Bidang!';
-            console.error('Gagal menghapus data:', error);
-            toast.error(errorMessage); // Menampilkan toast dengan pesan error dari API
+            // Assuming API returns an error message in "msg"
+            const errorMsg = error.response?.data?.msg || 'Gagal menghapus data bidang.';
+            Swal.fire('Gagal!', errorMsg, 'error');
           });
-      } else if (result.dismiss === Swal.DismissReason.cancel) {
-        toast.info('Data tidak jadi dihapus!');
       }
     });
   };
-  
 
   return (
     <div className="content pt-3 px-4">
@@ -219,7 +139,6 @@ const Bidang = () => {
         <button className="btn btn-success mb-3" onClick={handleAddData}>
           Tambah Data Bidang
         </button>
-
 
         <div className="table-responsive">
           <table className="table table-bordered table-striped">
@@ -238,7 +157,7 @@ const Bidang = () => {
                   <td>{item.BidangNama}</td>
                   <td>{item.BidangKeterangan}</td>
                   <td>
-                    <button   
+                    <button
                       className="btn btn-warning btn-sm me-2"
                       onClick={() => handleEdit(item)}
                     >
@@ -248,21 +167,52 @@ const Bidang = () => {
                       className="btn btn-danger btn-sm"
                       onClick={() => handleDelete(item.BidangId)}
                     >
-                      <i className="fas fa-trash"></i> Hapus
+                      <i className="fas fa-trash-alt"></i> Hapus
                     </button>
                   </td>
                 </tr>
               ))}
-              {bidang.length === 0 && (
-                <tr>
-                  <td colSpan="4" className="text-center">
-                    List Bidang tidak tersedia.
-                  </td>
-                </tr>
-              )}
             </tbody>
           </table>
         </div>
+
+        {/* Form untuk Tambah/Edit Data Bidang - Hanya muncul jika showForm true */}
+        {showForm && (
+          <div className="form-container card">
+            <div className="card-body">
+              <h4>{editMode ? 'Edit Bidang' : 'Tambah Bidang'}</h4>
+              <div className="form-group">
+                <label>Nama Bidang</label>
+                <input
+                  type="text"
+                  className="form-control"
+                  value={BidangNama}
+                  onChange={(e) => setBidangNama(e.target.value)}
+                />
+              </div>
+              <div className="form-group">
+                <label>Keterangan</label>
+                <div id="editor">
+                  <CKEditor
+                    editor={ClassicEditor}
+                    data={editorData}
+                    onChange={(event, editor) => {
+                      setEditorData(editor.getData());
+                    }}
+                  />
+                </div>
+              </div>
+              <div className="form-group">
+                <button className="btn btn-secondary" onClick={() => setShowForm(false)}>
+                  Batal
+                </button>
+                <button className="btn btn-primary" onClick={handleSave}>
+                  Simpan
+                </button>
+              </div>
+            </div>
+          </div>
+        )}
       </div>
     </div>
   );
