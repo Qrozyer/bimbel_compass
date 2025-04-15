@@ -1,27 +1,98 @@
-import React, { useState, useEffect } from 'react';
+import React, { useState, useEffect, useRef } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { addBidang, editBidang, setBidang } from '../actions/bidangActions';  // Import action creators
+import { addBidang, editBidang, setBidang } from '../actions/bidangActions'; 
 import Swal from 'sweetalert2';
 import axios from 'axios';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
-import { toast } from 'react-toastify'; // Import Toastify
+import DecoupledEditor from '@ckeditor/ckeditor5-build-decoupled-document';
+import '@ckeditor/ckeditor5-build-decoupled-document/build/translations/id'; 
+import { toast } from 'react-toastify'; 
 
 const baseURL = process.env.REACT_APP_BASE_URL;
 
 const Bidang = () => {
   const dispatch = useDispatch();
-  const bidang = useSelector((state) => state.bidang.bidang); // Akses data bidang dari Redux state
+  const bidang = useSelector((state) => state.bidang.bidang);
 
   const [BidangNama, setBidangNama] = useState('');
   const [editorData, setEditorData] = useState('');
   const [editMode, setEditMode] = useState(false);
   const [currentBidangId, setCurrentBidangId] = useState(null);
-  const [showForm, setShowForm] = useState(false); // State to control form visibility
+  const [showForm, setShowForm] = useState(false);
+
+  const editorRef = useRef(null); 
 
   useEffect(() => {
     fetchBidang();
   }, []);
+
+  const editorConfig = {
+    toolbar: [
+      'undo', 'redo', 
+      '|',
+      'heading', '|',
+      'bold', 'italic', 'strikethrough', 'subscript', 'superscript', 'code', 
+      '|',
+      'link', 'uploadImage', 'blockQuote', 'codeBlock', 
+      '|',
+      'alignment', '|',
+      'bulletedList', 'numberedList', 'todoList', 'outdent', 'indent',
+      '|',
+      'fontFamily', 'fontSize', 'fontColor', 'fontBackgroundColor',
+      '|',
+      'table',
+      '|',
+      'emoji'
+    ],
+    image: {
+      toolbar: [
+        'imageTextAlternative', '|',
+        'imageStyle:inline', 'imageStyle:block', 'imageStyle:side', '|',
+        'linkImage'
+      ]
+    },
+    table: {
+      contentToolbar: ['tableColumn', 'tableRow', 'mergeTableCells']
+    },
+    emoji: {
+      emojiList: ['', '', '', '', '', '', '', '', '', '']
+    },
+    extraPlugins: [MyCustomImageUploadAdapterPlugin],
+  };
+
+  function MyCustomImageUploadAdapterPlugin(editor) {
+    editor.plugins.get('FileRepository').createUploadAdapter = (loader) => {
+      return new MyCustomUploadAdapter(loader);
+    };
+  }
+
+  class MyCustomUploadAdapter {
+    constructor(loader) {
+      this.loader = loader;
+    }
+
+    upload() {
+      return new Promise((resolve, reject) => {
+        const data = new FormData();
+        data.append('file', this.loader.file);
+        axios.post('YOUR_IMAGE_UPLOAD_URL', data)
+          .then(response => {
+            resolve({
+              default: response.data.imageUrl
+            });
+          })
+          .catch(error => reject('Upload failed: ' + error));
+      });
+    }
+
+    abort() {
+      console.log('Upload aborted');
+    }
+  }
+
+  const handleEditorChange = (event, editor) => {
+    setEditorData(editor.getData());
+  };
 
   const fetchBidang = async () => {
     try {
@@ -29,7 +100,7 @@ const Bidang = () => {
       const response = await axios.get(`${baseURL}/bidang`, {
         headers: { Authorization: `Bearer ${token}` },
       });
-      dispatch(setBidang(response.data)); // Update Redux state dengan data terbaru
+      dispatch(setBidang(response.data)); 
     } catch (error) {
       toast.error('Gagal mengambil data bidang!');
     }
@@ -55,12 +126,11 @@ const Bidang = () => {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
-          fetchBidang(); // Memanggil fetchBidang untuk mendapatkan data terbaru
+          fetchBidang(); 
           Swal.fire('Success', 'Data berhasil diperbarui.', 'success');
-          setShowForm(false); // Hide form after save
+          setShowForm(false); 
         })
         .catch((error) => {
-          // Assuming API returns an error message in "msg"
           const errorMsg = error.response?.data?.msg || 'Gagal memperbarui data';
           toast.error(errorMsg);
         });
@@ -70,12 +140,11 @@ const Bidang = () => {
           headers: { Authorization: `Bearer ${token}` },
         })
         .then((response) => {
-          fetchBidang(); // Memanggil fetchBidang untuk mendapatkan data terbaru
+          fetchBidang(); 
           Swal.fire('Success', 'Data berhasil ditambahkan.', 'success');
-          setShowForm(false); // Hide form after save
+          setShowForm(false); 
         })
         .catch((error) => {
-          // Assuming API returns an error message in "msg"
           const errorMsg = error.response?.data?.msg || 'Gagal menambah data';
           toast.error(errorMsg);
         });
@@ -83,8 +152,8 @@ const Bidang = () => {
   };
 
   const handleAddData = () => {
-    setShowForm(true);  // Show form when "Tambah Data Bidang" is clicked
-    setEditMode(false);  // Reset to add mode
+    setShowForm(true);
+    setEditMode(false); 
     setBidangNama('');
     setEditorData('');
   };
@@ -93,8 +162,8 @@ const Bidang = () => {
     setBidangNama(item.BidangNama);
     setEditorData(item.BidangKeterangan);
     setCurrentBidangId(item.BidangId);
-    setEditMode(true);  // Switch to edit mode
-    setShowForm(true);  // Show form when editing
+    setEditMode(true);
+    setShowForm(true); 
   };
 
   const handleDelete = (id) => {
@@ -118,18 +187,26 @@ const Bidang = () => {
             headers: { Authorization: `Bearer ${token}` },
           })
           .then((response) => {
-            // Remove the deleted item from the state (Redux)
             dispatch(setBidang(bidang.filter((item) => item.BidangId !== id)));
             Swal.fire('Terhapus!', 'Data bidang telah dihapus.', 'success');
           })
           .catch((error) => {
-            // Assuming API returns an error message in "msg"
             const errorMsg = error.response?.data?.msg || 'Gagal menghapus data bidang.';
             Swal.fire('Gagal!', errorMsg, 'error');
           });
       }
     });
   };
+
+  // Menghubungkan toolbar dengan editor setelah render
+  useEffect(() => {
+    if (editorRef.current) {
+      const toolbarContainer = document.querySelector('#toolbar-container');
+      if (toolbarContainer) {
+        toolbarContainer.appendChild(editorRef.current.ui.view.toolbar.element);
+      }
+    }
+  }, [editorRef.current]); 
 
   return (
     <div className="content pt-3 px-4">
@@ -155,7 +232,7 @@ const Bidang = () => {
                 <tr key={item.BidangId}>
                   <td>{index + 1}</td>
                   <td>{item.BidangNama}</td>
-                  <td>{item.BidangKeterangan}</td>
+                  <td dangerouslySetInnerHTML={{ __html: item.BidangKeterangan }}></td>
                   <td>
                     <button
                       className="btn btn-warning btn-sm me-2"
@@ -176,7 +253,6 @@ const Bidang = () => {
           </table>
         </div>
 
-        {/* Form untuk Tambah/Edit Data Bidang - Hanya muncul jika showForm true */}
         {showForm && (
           <div className="form-container card">
             <div className="card-body">
@@ -192,18 +268,25 @@ const Bidang = () => {
               </div>
               <div className="form-group">
                 <label>Keterangan</label>
+                <div id="toolbar-container">
+                  <div id="toolbar">
+                    {/* Toolbar akan di-render di sini */}
+                  </div>
+                </div>
                 <div id="editor">
                   <CKEditor
-                    editor={ClassicEditor}
+                    editor={DecoupledEditor}
                     data={editorData}
-                    onChange={(event, editor) => {
-                      setEditorData(editor.getData());
+                    config={editorConfig}
+                    onChange={handleEditorChange}
+                    onReady={editor => {
+                      editorRef.current = editor;
                     }}
                   />
                 </div>
               </div>
               <div className="form-group">
-                <button className="btn btn-secondary" onClick={() => setShowForm(false)}>
+                <button className="btn btn-secondary mr-2" onClick={() => setShowForm(false)}>
                   Batal
                 </button>
                 <button className="btn btn-primary" onClick={handleSave}>
@@ -216,6 +299,6 @@ const Bidang = () => {
       </div>
     </div>
   );
-};
+}
 
 export default Bidang;
