@@ -22,6 +22,12 @@ const Sidebar = () => {
                 <p>Bidang</p>
               </Link>
             </li>
+            <li className="nav-item">
+              <Link to="/sub-bidang" className="nav-link">
+                <i className="nav-icon fas fa-file"></i>
+                <p>Sub Bidang</p>
+              </Link>
+            </li>
           </ul>
         </nav>
       </div>

@@ -10,7 +10,12 @@ import Dashboard from './pages/Dashboard';
 import NotFound from './pages/NotFound';
 import Login from './pages/Login';
 import Register from './pages/Register';
-import Bidang from './pages/Bidang';
+
+import BidangListPage from './pages/bidang/BidangListPage';
+import BidangFormPage from './pages/bidang/BidangFormPage';
+
+import SubBidangListPage from './pages/subBidang/SubBidangListPage';
+import SubBidangFormPage from './pages/subBidang/SubBidangFormPage';
 
 function App() {
   return (
@@ -23,7 +28,12 @@ function App() {
         <Route element={<PrivateRoute />}>
           <Route path="/" element={<Layout />}>
             <Route index element={<Dashboard />} />
-            <Route path="/bidang" element={<Bidang />} />            
+            <Route path="/bidang" element={<BidangListPage />} />      
+            <Route path="/bidang/add" element={<BidangFormPage />} />
+            <Route path="/bidang/edit/:id" element={<BidangFormPage />} />
+            <Route path="/sub-bidang" element={<SubBidangListPage />} />      
+            <Route path="/sub-bidang/add" element={<SubBidangFormPage />} />
+            <Route path="/sub-bidang/edit/:id" element={<SubBidangFormPage />} />      
             <Route path="*" element={<NotFound />} />
           </Route>
         </Route>

@@ -1,11 +1,13 @@
 import { combineReducers } from 'redux';
-import appReducer from './appReducer';  // Import appReducer untuk user state
-import bidangReducer from './bidangReducer';  // Import bidangReducer untuk bidang state
+import appReducer from './appReducer';  
+import bidangReducer from './bidangReducer';
+import subBidangReducer from './subBidangReducer';
 
-// Menggabungkan semua reducer
+
 const rootReducer = combineReducers({
-  app: appReducer,    // Untuk user state
-  bidang: bidangReducer,  // Untuk bidang state
+  app: appReducer,    
+  bidang: bidangReducer, 
+  subBidang: subBidangReducer,
 });
 
 export default rootReducer;
