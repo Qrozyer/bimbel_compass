@@ -5,24 +5,24 @@ import Swal from 'sweetalert2';
 import { fetchData } from '../../utils/api';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
-const SubBidangForm = ({ initialData, onSave, onCancel }) => {
-  const [SubNama, setSubNama] = useState(String(initialData?.SubNama || ''));
-  const [editorData, setEditorData] = useState(String(initialData?.SubKeterangan || ''));
-  const [bidangList, setBidangList] = useState([]); // State untuk menyimpan data bidang
-  const [selectedBidang, setSelectedBidang] = useState(initialData?.BidangId || ''); // State untuk menyimpan bidang yang dipilih
+const MateriForm = ({ initialData, onSave, onCancel }) => {
+  const [MateriJudul, setMateriJudul] = useState(String(initialData?.MateriJudul || ''));
+  const [editorData, setEditorData] = useState(String(initialData?.MateriIsi || ''));
+  const [subBidangList, setSubBidangList] = useState([]); // State untuk menyimpan data subBidang
+  const [selectedSubBidang, setSelectedSubBidang] = useState(initialData?.SubId || ''); // State untuk menyimpan subBidang yang dipilih
   const editorRef = useRef(null);
 
   useEffect(() => {
-    setSubNama(String(initialData?.SubNama || ''));
-    setEditorData(String(initialData?.SubKeterangan || ''));
+    setMateriJudul(String(initialData?.MateriJudul || ''));
+    setEditorData(String(initialData?.MateriIsi || ''));
 
-    const fetchBidangData = async () => {
-      const bidangData = await fetchData('bidang');
-      if (bidangData) {
-        setBidangList(bidangData);
+    const fetchSubBidangData = async () => {
+      const subBidangData = await fetchData('sub-bidang');
+      if (subBidangData) {
+        setSubBidangList(subBidangData);
       }
     };
-    fetchBidangData();
+    fetchSubBidangData();
   }, [initialData]);
 
 
@@ -31,43 +31,43 @@ const SubBidangForm = ({ initialData, onSave, onCancel }) => {
   };
 
   const handleSave = () => {
-    if (!SubNama || !editorData || !selectedBidang) {
+    if (!MateriJudul || !editorData || !selectedSubBidang) {
       Swal.fire('Error', 'Semua field harus diisi!', 'error');
       return;
     }
-    onSave({ SubNama, SubKeterangan: editorData, BidangId: parseInt(selectedBidang) });
+    onSave({ MateriJudul, MateriIsi: editorData, SubId: parseInt(selectedSubBidang) });
   };
 
   return (
     <div className="form-container card">
       <div className="card-body">
-        <h4>{initialData ? 'Edit Sub Bidang' : 'Tambah Sub Bidang'}</h4>
+        <h4>{initialData ? 'Edit Materi' : 'Tambah Materi'}</h4>
         <div className="form-group">
-          <label>Bidang</label>
+          <label>Sub Bidang</label>
           <select
             className="form-control"
-            value={selectedBidang}
-            onChange={(e) => setSelectedBidang(e.target.value)}
+            value={selectedSubBidang}
+            onChange={(e) => setSelectedSubBidang(e.target.value)}
           >
-            <option value="">Pilih Bidang</option>
-            {bidangList.map((bidang) => (
-              <option key={bidang.BidangId} value={bidang.BidangId}>
-                {bidang.BidangNama}
+            <option value="">Pilih Sub Bidang</option>
+            {subBidangList.map((subBidang) => (
+              <option key={subBidang.SubId} value={subBidang.SubId}>
+                {subBidang.SubNama}
               </option>
             ))}
           </select>
         </div>
         <div className="form-group">
-          <label>Nama Sub Bidang</label>
+          <label>Judul Materi</label>
           <input
             type="text"
             className="form-control"
-            value={SubNama}
-            onChange={(e) => setSubNama(e.target.value)}
+            value={MateriJudul}
+            onChange={(e) => setMateriJudul(e.target.value)}
           />
         </div>
         <div className="form-group">
-          <label>Keterangan</label>
+          <label>Isi Materi</label>
           <div id="editor">
             <CKEditor
               editor={ClassicEditor}
@@ -91,4 +91,4 @@ const SubBidangForm = ({ initialData, onSave, onCancel }) => {
   );
 };
 
-export default SubBidangForm;
+export default MateriForm;

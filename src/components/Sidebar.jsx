@@ -28,6 +28,12 @@ const Sidebar = () => {
                 <p>Sub Bidang</p>
               </Link>
             </li>
+            <li className="nav-item">
+              <Link to="/materi" className="nav-link">
+                <i className="nav-icon fas fa-file"></i>
+                <p>Materi</p>
+              </Link>
+            </li>
           </ul>
         </nav>
       </div>

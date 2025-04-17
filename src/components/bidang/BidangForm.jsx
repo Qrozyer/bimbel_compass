@@ -1,8 +1,8 @@
 import React, { useState, useRef, useEffect } from 'react';
 import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 import { editorConfig } from '../../utils/editorConfig';
 import Swal from 'sweetalert2';
+import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
 const BidangForm = ({ initialData, onSave, onCancel }) => {
   console.log("BidangForm initialData:", initialData);

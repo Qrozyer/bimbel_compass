@@ -17,6 +17,9 @@ import BidangFormPage from './pages/bidang/BidangFormPage';
 import SubBidangListPage from './pages/subBidang/SubBidangListPage';
 import SubBidangFormPage from './pages/subBidang/SubBidangFormPage';
 
+import MateriListPage from './pages/materi/MateriListPage';
+import MateriFormPage from './pages/materi/MateriFormPage';
+
 function App() {
   return (
     <Router>
@@ -33,7 +36,10 @@ function App() {
             <Route path="/bidang/edit/:id" element={<BidangFormPage />} />
             <Route path="/sub-bidang" element={<SubBidangListPage />} />      
             <Route path="/sub-bidang/add" element={<SubBidangFormPage />} />
-            <Route path="/sub-bidang/edit/:id" element={<SubBidangFormPage />} />      
+            <Route path="/sub-bidang/edit/:id" element={<SubBidangFormPage />} />   
+            <Route path="/materi" element={<MateriListPage />} />
+            <Route path="/materi/add" element={<MateriFormPage />} />
+            <Route path="/materi/edit/:id" element={<MateriFormPage />} />       
             <Route path="*" element={<NotFound />} />
           </Route>
         </Route>
