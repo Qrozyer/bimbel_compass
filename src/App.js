@@ -14,11 +14,15 @@ import Register from './pages/Register';
 import BidangListPage from './pages/bidang/BidangListPage';
 import BidangFormPage from './pages/bidang/BidangFormPage';
 
+import SubBidangPage from './pages/subBidang/SubBidangPage';
 import SubBidangListPage from './pages/subBidang/SubBidangListPage';
 import SubBidangFormPage from './pages/subBidang/SubBidangFormPage';
 
 import MateriListPage from './pages/materi/MateriListPage';
 import MateriFormPage from './pages/materi/MateriFormPage';
+
+import SoalListPage from './pages/soal/SoalListPage';
+import SoalFormPage from './pages/soal/SoalFormPage';
 
 function App() {
   return (
@@ -39,7 +43,11 @@ function App() {
             <Route path="/sub-bidang/edit/:id" element={<SubBidangFormPage />} />   
             <Route path="/materi" element={<MateriListPage />} />
             <Route path="/materi/add" element={<MateriFormPage />} />
-            <Route path="/materi/edit/:id" element={<MateriFormPage />} />       
+            <Route path="/materi/edit/:id" element={<MateriFormPage />} /> 
+            <Route path="/soal" element={<SoalListPage />} />
+            <Route path="/soal/add" element={<SoalFormPage />} />
+            <Route path="/soal/edit/:id" element={<SoalFormPage />} />         
+            <Route path="/sub-bidang/:bidangId" element={<SubBidangPage />} /> {/* Rute untuk sub bidang */}         
             <Route path="*" element={<NotFound />} />
           </Route>
         </Route>

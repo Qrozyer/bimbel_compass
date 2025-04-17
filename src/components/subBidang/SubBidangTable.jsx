@@ -2,7 +2,7 @@ import React from 'react';
 
 const SubBidangTable = ({ data, onEdit, onDelete }) => {
   if (!data || !Array.isArray(data)) { 
-    return <div>Loading...</div>; // Atau tampilkan pesan lain
+    return <div>Data kosong</div>; // Atau tampilkan pesan lain
   }
 
   console.log("SubBidangTable data:", data);

@@ -1,6 +1,10 @@
 import React from 'react';
 
 const BidangTable = ({ data, onEdit, onDelete }) => {
+  if (!data || !Array.isArray(data)) { 
+    return <div>Data kosong</div>; // Atau tampilkan pesan lain
+  }
+  
   return (
     <div className="table-responsive">
       <table className="table table-bordered table-striped">

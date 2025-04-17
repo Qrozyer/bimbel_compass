@@ -34,6 +34,12 @@ const Sidebar = () => {
                 <p>Materi</p>
               </Link>
             </li>
+            <li className="nav-item">
+              <Link to="/soal" className="nav-link">
+                <i className="nav-icon fas fa-file"></i>
+                <p>Soal</p>
+              </Link>
+            </li>
           </ul>
         </nav>
       </div>
