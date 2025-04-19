@@ -46,8 +46,9 @@ function App() {
             <Route path="/materi/edit/:id" element={<MateriFormPage />} /> 
             <Route path="/soal" element={<SoalListPage />} />
             <Route path="/soal/add" element={<SoalFormPage />} />
-            <Route path="/soal/edit/:id" element={<SoalFormPage />} />         
-            <Route path="/sub-bidang/:bidangId" element={<SubBidangPage />} /> {/* Rute untuk sub bidang */}         
+            <Route path="/soal/edit/:id" element={<SoalFormPage />} />      
+            
+            <Route path="/sub-bidang/:id" element={<SubBidangPage />} /> {/* Rute untuk sub bidang */}         
             <Route path="*" element={<NotFound />} />
           </Route>
         </Route>

@@ -40,12 +40,12 @@ const SubBidangFormPage = () => {
     if (newData) {
       dispatch(setSubBidang(newData));
     }
-    navigate('/sub-bidang');
+    navigate(`/sub-bidang/${data.BidangId}`);
   };
 
   return (
     <div style={{ margin: '20px auto', padding: '20px', maxWidth: '1200px' }}>
-    <SubBidangForm key={id} initialData={currentSubBidang} onSave={handleSave} onCancel={() => navigate('/sub-bidang')} />    </div>
+    <SubBidangForm key={id} initialData={currentSubBidang} onSave={handleSave} onCancel={() => navigate(`/sub-bidang/${currentSubBidang?.BidangId}`)} />    </div>
   );
 };
 

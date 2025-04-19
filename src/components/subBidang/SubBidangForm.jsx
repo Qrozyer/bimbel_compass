@@ -25,6 +25,12 @@ const SubBidangForm = ({ initialData, onSave, onCancel }) => {
     fetchBidangData();
   }, [initialData]);
 
+  useEffect(() => {
+    if (initialData?.BidangId) {
+      setSelectedBidang(initialData?.BidangId);
+    }
+  }, [initialData]);
+
 
   const handleEditorChange = (event, editor) => {
     setEditorData(editor.getData());
