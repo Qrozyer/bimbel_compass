@@ -24,6 +24,9 @@ import MateriFormPage from './pages/materi/MateriFormPage';
 import SoalListPage from './pages/soal/SoalListPage';
 import SoalFormPage from './pages/soal/SoalFormPage';
 
+import PesertaListPage from './pages/peserta/PesertaListPage';
+import PesertaFormPage from './pages/peserta/PesertaFormPage';
+
 function App() {
   return (
     <Router>
@@ -46,7 +49,10 @@ function App() {
             <Route path="/materi/edit/:id" element={<MateriFormPage />} /> 
             <Route path="/soal" element={<SoalListPage />} />
             <Route path="/soal/add" element={<SoalFormPage />} />
-            <Route path="/soal/edit/:id" element={<SoalFormPage />} />      
+            <Route path="/soal/edit/:id" element={<SoalFormPage />} />
+            <Route path="/peserta" element={<PesertaListPage />} />
+            <Route path="/peserta/add" element={<PesertaFormPage />} />
+            <Route path="/peserta/edit/:id" element={<PesertaFormPage />} />      
             
             <Route path="/sub-bidang/:id" element={<SubBidangPage />} /> {/* Rute untuk sub bidang */}         
             <Route path="*" element={<NotFound />} />
