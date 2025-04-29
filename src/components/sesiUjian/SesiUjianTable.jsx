@@ -10,7 +10,7 @@ const SesiUjianTable = ({ data, onEdit, onDelete }) => {
 
   const handleSectionClick = (sectionId) => {
     // Navigasi ke halaman buat soal dengan SectionId
-    navigate(`/soal/section/${sectionId}`);
+    navigate(`/soal-peserta/section/${sectionId}`);
   };
 
   return (

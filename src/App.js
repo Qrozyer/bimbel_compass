@@ -38,6 +38,11 @@ import SesiUjianFormPage from './pages/sesiUjian/SesiUjianFormPage';
 import SesiSoal from './pages/sesiSoal/SesiSoal';
 import SesiSoalForm from './pages/sesiSoal/SesiSoalForm';
 
+import SesiSoalPeserta from './pages/sesiUjian/SesiSoalPeserta';
+import SesiujianPeserta from './pages/sesiUjian/SesiUjianPeserta';
+
+import TambahSesiPeserta from './pages/sesiPeserta/TambahSesiPeserta';
+
 import BidangPeserta from './pages/bidang/BidangPeserta';
 import PesertaBidang from './pages/peserta/PesertaBidang';
 import TambahPesertaBidang from './pages/peserta/TambahPesertaBidang';
@@ -85,10 +90,15 @@ function App() {
             <Route path="/soal/section/:sectionId" element={<SesiSoal />} /> {/* Rute untuk sesi soal ujian */}
             <Route path="/soal-list/:sectionId" element={<SesiSoalForm />} /> {/* Rute untuk form sesi soal ujian */}
 
+            <Route path="/soal-peserta/section/:sectionId" element={<SesiSoalPeserta />} /> {/* Rute untuk sesi soal peserta ujian */}
+            <Route path="/peserta/section/:sectionId" element={<SesiujianPeserta />} /> {/* Rute untuk sesi peserta ujian */}
+
             <Route path="/bidang-peserta/add" element={<BidangPeserta />} /> {/* Rute untuk bidang peserta */}
             <Route path="/peserta-bidang/:BidangId" element={<PesertaBidang />} /> {/* Rute untuk bidang peserta */}
             <Route path="/peserta-bidang/tambah/:BidangId" element={<TambahPesertaBidang />} />
             <Route path="/peserta-bidang/edit/:bidangId/:pesertaBidangId" element={<EditPesertaBidang />} />
+
+            <Route path="/peserta/section/add/:sectionId" element={<TambahSesiPeserta />} /> {/* Rute untuk menambah peserta ke sesi ujian */}
 
             {/* Rute untuk halaman tidak ditemukan */}  
             <Route path="*" element={<NotFound />} />
