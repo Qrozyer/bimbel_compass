@@ -87,8 +87,8 @@ function App() {
 
             <Route path="/bidang-peserta/add" element={<BidangPeserta />} /> {/* Rute untuk bidang peserta */}
             <Route path="/peserta-bidang/:BidangId" element={<PesertaBidang />} /> {/* Rute untuk bidang peserta */}
-            <Route path="/peserta/bidang/:BidangId/tambah" element={<TambahPesertaBidang />} />
-            <Route path="/peserta-bidang/edit/:id" element={<EditPesertaBidang />} /> {/* Rute untuk edit peserta bidang */}
+            <Route path="/peserta-bidang/tambah/:BidangId" element={<TambahPesertaBidang />} />
+            <Route path="/peserta-bidang/edit/:bidangId/:pesertaBidangId" element={<EditPesertaBidang />} />
 
             {/* Rute untuk halaman tidak ditemukan */}  
             <Route path="*" element={<NotFound />} />

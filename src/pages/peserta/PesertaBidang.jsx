@@ -2,6 +2,7 @@ import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchData, deleteData } from '../../utils/api'; // pastikan deleteData ada
 import { toast } from 'react-toastify';
+import Swal from 'sweetalert2'; // Import SweetAlert2
 import 'react-toastify/dist/ReactToastify.css';
 
 const PesertaBidang = () => {
@@ -27,22 +28,32 @@ const PesertaBidang = () => {
     }
   };
 
-  const handleEdit = (id) => {
-    // id di sini adalah id dari peserta bidang, bukan peserta_id
-    navigate(`/peserta-bidang/edit/${id}`);
+  const handleEdit = (pesertaBidangId, BidangId) => {
+    navigate(`/peserta-bidang/edit/${BidangId}/${pesertaBidangId}`);
   };
 
   const handleDelete = async (id) => {
-    if (window.confirm('Yakin ingin menghapus peserta dari bidang ini?')) {
-      try {
-        await deleteData(`peserta/bidang/${id}`);
-        toast.success('Peserta berhasil dihapus!');
-        fetchPeserta(); // Refresh list
-      } catch (error) {
-        console.error('Error deleting peserta:', error);
-        toast.error('Gagal menghapus peserta.');
+    // SweetAlert2 confirmation
+    Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: 'Peserta yang dihapus tidak bisa dikembalikan!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Hapus',
+      cancelButtonText: 'Batal',
+    }).then(async (result) => {
+      if (result.isConfirmed) {
+        try {
+          await deleteData('peserta/bidang', id); // Menggunakan deleteData dengan endpoint dan id
+          toast.success('Peserta berhasil dihapus!');
+          fetchPeserta(); // Refresh list
+          Swal.fire('Terhapus!', 'Peserta telah dihapus.', 'success');
+        } catch (error) {
+          console.error('Error deleting peserta:', error);
+          toast.error('Gagal menghapus peserta.');
+        }
       }
-    }
+    });
   };
 
   const handleBack = () => {
@@ -98,7 +109,7 @@ const PesertaBidang = () => {
                   <div className="d-flex gap-2">
                     <button
                       className="btn btn-sm btn-warning"
-                      onClick={() => handleEdit(peserta.Id)}
+                      onClick={() => handleEdit(peserta.Id, BidangId)}
                     >
                       Edit
                     </button>

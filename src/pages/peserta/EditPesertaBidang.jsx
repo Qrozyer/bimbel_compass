@@ -1,12 +1,13 @@
 import React, { useEffect, useState } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchData, editData } from '../../utils/api'; // pastikan updateData ada
+import { fetchData, editData } from '../../utils/api';
 import { toast } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 
 const EditPesertaBidang = () => {
-  const { id } = useParams(); // id peserta bidang
+  const { bidangId, pesertaBidangId } = useParams();
   const navigate = useNavigate();
+  
   const [pesertaBidang, setPesertaBidang] = useState(null);
   const [expiredDate, setExpiredDate] = useState('');
   const [expiredTime, setExpiredTime] = useState('');
@@ -14,54 +15,62 @@ const EditPesertaBidang = () => {
 
   useEffect(() => {
     fetchPesertaBidang();
-  }, [id]);
+  }, [bidangId, pesertaBidangId]);
 
   const fetchPesertaBidang = async () => {
     try {
-      const data = await fetchData(`peserta/bidang/${id}`);
-      setPesertaBidang(data);
-      console.log("Peserta Bidang Data:", data); // untuk cek di console
+      const allPesertaBidang = await fetchData(`peserta/bidang/${bidangId}`);
+      const selected = allPesertaBidang.find(item => item.Id === parseInt(pesertaBidangId));
   
-      if (data.expired || data.Expired) {
-        const expiredValue = data.expired || data.Expired;
-        const [date, time] = expiredValue.split(' ');
-        setExpiredDate(date);
-        setExpiredTime(time.substring(0, 5)); // ambil HH:mm
+      if (selected) {
+        setPesertaBidang(selected);
+
+        const expiredValue = selected.expired || selected.Expired || '';
+        if (expiredValue) {
+          const [date, time] = expiredValue.split(' ');
+          setExpiredDate(date || '');
+          setExpiredTime((time || '').substring(0, 5));
+        }
+
+        setAktif(selected.aktif === 1 || selected.Aktif === 1);
       } else {
-        setExpiredDate('');
-        setExpiredTime('');
+        toast.error('Peserta bidang tidak ditemukan');
+        navigate(-1);
       }
-  
-      setAktif(data.aktif === 1 || data.Aktif === 1);
     } catch (error) {
       console.error('Error fetching peserta bidang:', error);
       toast.error('Gagal mengambil data peserta bidang');
     }
   };
-  
 
   const handleSubmit = async () => {
     if (!expiredDate || !expiredTime) {
       toast.error('Tanggal dan jam expired wajib diisi!');
       return;
     }
-
+  
     const expiredFull = `${expiredDate} ${expiredTime}:00`;
-
+  
     try {
-      await editData(`peserta/bidang/${id}`, {
+      const result = await editData(`peserta/bidang`, pesertaBidang.Id, {
         BidangId: pesertaBidang.BidangId,
         PesertaId: pesertaBidang.PesertaId,
         Expired: expiredFull,
         Aktif: aktif ? 1 : 0,
       });
-      toast.success('Data peserta bidang berhasil diperbarui!');
-      navigate(-1);
+  
+      if (result) {
+        toast.success('Data peserta bidang berhasil diperbarui!');
+        navigate(-1);
+      } else {
+        // Kalau result null, sudah di-toast error di editData
+      }
     } catch (error) {
-      console.error('Error updating peserta bidang:', error);
+      console.error('Error unexpected:', error);
       toast.error('Gagal memperbarui data.');
     }
   };
+  
 
   if (!pesertaBidang) {
     return <div>Loading...</div>;
@@ -74,12 +83,11 @@ const EditPesertaBidang = () => {
       <div className="mb-3">
         <label className="form-label">Nama Peserta</label>
         <input
-  type="text"
-  className="form-control"
-  value={pesertaBidang.PesertaNama || ''}
-  disabled
-/>
-
+          type="text"
+          className="form-control"
+          value={pesertaBidang?.PesertaNama || ''}
+          disabled
+        />
       </div>
 
       <div className="mb-3">
@@ -103,15 +111,15 @@ const EditPesertaBidang = () => {
       </div>
 
       <div className="mb-3">
-      <select
-  className="form-select"
-  value={aktif ? '1' : '0'}
-  onChange={(e) => setAktif(e.target.value === '1')}
->
-  <option value="1">Aktif</option>
-  <option value="0">Tidak Aktif</option>
-</select>
-
+        <label className="form-label">Status Aktif</label>
+        <select
+          className="form-select"
+          value={aktif ? '1' : '0'}
+          onChange={(e) => setAktif(e.target.value === '1')}
+        >
+          <option value="1">Aktif</option>
+          <option value="0">Tidak Aktif</option>
+        </select>
       </div>
 
       <div className="d-flex justify-content-end gap-2">
