@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const PesertaTable = ({ data }) => {
+const MateriTableSubBidang = ({ data }) => {
   const navigate = useNavigate();
 
   // Menampilkan pesan jika data kosong atau tidak valid
@@ -10,14 +10,14 @@ const PesertaTable = ({ data }) => {
   }
 
   const handleCardClick = (id) => {
-    // Navigasi ke halaman detail peserta berdasarkan ID
-    navigate(`/peserta/pilih/${id}`);
+    // Navigasi ke halaman detail materi berdasarkan ID
+    navigate(`/soal/${id}`);
   };
 
   return (
     <div className="row">
       {data.map((item) => (
-        <div className="col-12" key={item.peserta_id}>
+        <div className="col-12" key={item.MateriId}>
           <div
             className="card"
             style={{
@@ -27,21 +27,18 @@ const PesertaTable = ({ data }) => {
               cursor: 'pointer', // Agar card bisa diklik
               transition: 'transform 0.2s',
               marginBottom: '2px', // Spasi antar card
-              maxHeight: '100px', // Mengatur tinggi card
+              maxHeight: '120px', // Mengatur tinggi card
             }}
-            onClick={() => handleCardClick(item.peserta_id)} // Mengarahkan ke halaman detail
+            onClick={() => handleCardClick(item.MateriId)} // Mengarahkan ke halaman detail
             onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.008)'} // Efek saat hover
             onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} // Kembali ke ukuran normal
           >
-            <div className="card-body" style={{ width: '100%', padding: '1px' }}> {/* Kurangi padding */}
+            <div className="card-body" style={{ width: '100%', padding: '1px' }}>
               <table className="table table-borderless" style={{ width: '100%', fontSize: '14px' }}>
                 <tbody>
                   <tr>
-                    <td style={{ width: '20%' }}><strong>{item.peserta_nama}</strong></td>
-                    <td style={{ width: '20%' }}>{item.peserta_asalsekolah}</td>
-                    <td style={{ width: '20%' }}>{item.peserta_periode}</td>
-                    <td style={{ width: '20%' }}>{item.peserta_alamat}</td>
-                    <td style={{ width: '20%' }}>{item.peserta_nohp}</td>
+                    <td style={{ width: '20%' }}><strong>{item.MateriJudul}</strong></td>
+                    <td style={{ width: '20%' }} dangerouslySetInnerHTML={{ __html: item.MateriIsi }}></td>
                   </tr>
                 </tbody>
               </table>
@@ -53,4 +50,4 @@ const PesertaTable = ({ data }) => {
   );
 };
 
-export default PesertaTable;
+export default MateriTableSubBidang;

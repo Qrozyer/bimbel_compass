@@ -41,33 +41,48 @@ const SubBidangPage = () => {
       if (result.isConfirmed) {
         // Panggil delete API
         await deleteData('sub-bidang', id);  
-        dispatch(setSubBidang(subBidang.filter((item) => item.SubId !== id)));  // Memperbarui state Redux
+        
+        // Hapus data sub bidang yang sesuai dengan id
+        const updatedSubBidang = subBidang.filter((item) => item.SubId !== id);
+        
+        // Memperbarui state Redux dengan data yang tersisa
+        dispatch(setSubBidang(updatedSubBidang)); 
+  
+        // Memperbarui state lokal
+        setSubBidangData(updatedSubBidang);
+  
         Swal.fire('Terhapus!', 'Data sub bidang telah dihapus.', 'success');
       }
     });
   };
+  
 
+  // Jika data kosong, tampilkan tombol Kembali dan Tambah Sub Bidang
   if (!subBidang.length) return (
-
-  <div className="pt-4 mb-4 ml-3">
-    <h1 className="ml-3 mb-3">Sub Bidang untuk Bidang: {subBidang[0]?.BidangNama}</h1>
-      <button className="btn btn-success mb-4 ml-3" onClick={() => navigate(`/sub-bidang/add`)}>
-        Tambah Data Sub Bidang
+    <div className="pt-4 mb-4 ml-3">
+      <h1 className="ml-3 mb-3">Sub Bidang untuk Bidang: {subBidang[0]?.BidangNama}</h1>
+      {/* Tombol Kembali */}
+      <button 
+        className="btn btn-secondary mb-4 ml-3" 
+        onClick={() => navigate(-1)} // Kembali ke halaman sebelumnya
+      >
+        Kembali
       </button>
-  </div>
-
+    </div>
   );
 
   return (
     <div className="pt-4 mb-4 ml-4">
       <h1 className="ml-3 mb-3">Sub Bidang untuk Bidang: {subBidang[0]?.BidangNama}</h1>
-      <button className="btn btn-success mb-4 ml-3" onClick={() => navigate(`/sub-bidang/add`)}>
-        Tambah Data Sub Bidang
+      {/* Tombol Kembali */}
+      <button 
+        className="btn btn-secondary mb-4 ml-3" 
+        onClick={() => navigate(-1)} // Kembali ke halaman sebelumnya
+      >
+        Kembali
       </button>
       <SubBidangDashboard 
-        data={subBidang} 
-        onEdit={(item) => navigate(`/sub-bidang/edit/${item.SubId}`)} 
-        onDelete={handleDelete}
+        data={subBidang}
       />
     </div>
   );

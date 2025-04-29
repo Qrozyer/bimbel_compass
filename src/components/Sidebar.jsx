@@ -11,35 +11,17 @@ const Sidebar = () => {
         <nav className="mt-2">
           <ul className="nav nav-pills nav-sidebar flex-column" data-widget="treeview">
             <li className="nav-item">
-              <Link to="/" className="nav-link">
+              <Link to="/dashboard" className="nav-link">
                 <i className="nav-icon fas fa-tachometer-alt"></i>
                 <p>Dashboard</p>
               </Link>
-            </li>
+            </li>       
             <li className="nav-item">
-              <Link to="/bidang" className="nav-link">
+              <Link to="/bidang-list" className="nav-link">
                 <i className="nav-icon fas fa-file"></i>
                 <p>Bidang</p>
               </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/sub-bidang" className="nav-link">
-                <i className="nav-icon fas fa-file"></i>
-                <p>Sub Bidang</p>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/materi" className="nav-link">
-                <i className="nav-icon fas fa-file"></i>
-                <p>Materi</p>
-              </Link>
-            </li>
-            <li className="nav-item">
-              <Link to="/soal" className="nav-link">
-                <i className="nav-icon fas fa-file"></i>
-                <p>Soal</p>
-              </Link>
-            </li>
+            </li>     
             <li className="nav-item">
               <Link to="/peserta" className="nav-link">
                 <i className="nav-icon fas fa-file"></i>

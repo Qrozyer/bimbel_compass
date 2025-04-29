@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';  // Mengimpor useNavigate
 
-const BidangTableDashboard = ({ data, onEdit, onDelete }) => {
+const BidangTableDashboard = ({ data }) => {
   const navigate = useNavigate(); // Menyiapkan navigasi untuk pindah ke halaman sub bidang
 
   if (!data || !Array.isArray(data)) { 
@@ -23,46 +23,19 @@ const BidangTableDashboard = ({ data, onEdit, onDelete }) => {
             borderRadius: '8px',
             padding: '15px',
             width: '250px',
-            boxShadow: '0 2px 5px rgba(0, 0, 0, 0.1)',
-            backgroundColor: '#f9f9f9',
+            boxShadow: '0 4px 8px rgba(0, 0, 0, 0.1)',
+            backgroundColor: '#ffeb3b',  // Warna latar belakang cerah kuning
             cursor: 'pointer',  // Menambahkan cursor pointer agar pengguna tahu bahwa ini bisa diklik
+            transition: 'transform 0.3s ease, box-shadow 0.3s ease',  // Efek transisi
           }}
           onClick={() => handleCardClick(item.BidangId)}  // Menambahkan onClick untuk navigasi
+          onMouseEnter={(e) => e.currentTarget.style.transform = 'scale(1.05)'} // Efek saat hover
+          onMouseLeave={(e) => e.currentTarget.style.transform = 'scale(1)'} // Kembali ke ukuran semula
         >
           <div>
             <strong>{item.BidangNama}</strong>
           </div>
           <div dangerouslySetInnerHTML={{ __html: item.BidangKeterangan }}></div>
-          <div style={{ marginTop: '10px', display: 'flex', justifyContent: 'space-between' }}>
-            <button 
-              onClick={(e) => { e.stopPropagation(); onEdit(item); }}  // Mencegah onClick edit mengarahkan ke Sub Bidang
-              style={{
-                backgroundColor: '#FFC107', 
-                color: '#00000', 
-                border: 'none', 
-                padding: '5px 10px', 
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              <i className="fas fa-edit mr-1"></i>
-              Edit
-            </button>
-            <button 
-              onClick={(e) => { e.stopPropagation(); onDelete(item.BidangId); }}  // Mencegah onClick hapus mengarahkan ke Sub Bidang
-              style={{
-                backgroundColor: '#F44336', 
-                color: '#fff', 
-                border: 'none', 
-                padding: '5px 10px', 
-                borderRadius: '4px',
-                cursor: 'pointer'
-              }}
-            >
-              <i className="fas fa-trash-alt mr-1"></i>
-              Hapus
-            </button>
-          </div>
         </div>
       ))}
     </div>
