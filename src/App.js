@@ -48,6 +48,9 @@ import PesertaBidang from './pages/peserta/PesertaBidang';
 import TambahPesertaBidang from './pages/peserta/TambahPesertaBidang';
 import EditPesertaBidang from './pages/peserta/EditPesertaBidang';
 
+import HasilUjian from './pages/laporanUjian/HasilUjian';
+import HasilDetailUjian from './pages/laporanUjian/HasilDetailUjian';
+
 
 function App() {
   return (
@@ -99,6 +102,10 @@ function App() {
             <Route path="/peserta-bidang/edit/:bidangId/:pesertaBidangId" element={<EditPesertaBidang />} />
 
             <Route path="/peserta/section/add/:sectionId" element={<TambahSesiPeserta />} /> {/* Rute untuk menambah peserta ke sesi ujian */}
+
+            {/* Rute untuk halaman hasil ujian */}  
+            <Route path="/ujian" element={<HasilUjian />} />          
+            <Route path="/hasil/ujian/:sectionId" element={<HasilDetailUjian />} />  
 
             {/* Rute untuk halaman tidak ditemukan */}  
             <Route path="*" element={<NotFound />} />

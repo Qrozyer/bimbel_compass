@@ -20,6 +20,7 @@ const SesiUjianTable = ({ data, onEdit, onDelete }) => {
           <tr>
             <th>No</th>
             <th>Nama Sesi</th>
+            <th>Status</th>
             <th>Aksi</th>
           </tr>
         </thead>
@@ -32,6 +33,13 @@ const SesiUjianTable = ({ data, onEdit, onDelete }) => {
                 style={{ cursor: 'pointer', color: 'blue' }}
               >
                 {item.SectionNama}
+              </td>
+              <td>
+                {item.Status === 1 ? (
+                  <span className="badge bg-success">Aktif</span>
+                ) : (
+                  <span className="badge bg-danger">Tidak Aktif</span>
+                )}
               </td>
               <td>
                 <button className="btn btn-warning btn-sm me-2" onClick={() => onEdit(item)}>

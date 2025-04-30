@@ -57,3 +57,16 @@ export const deleteData = async (endpoint, id) => {
     return null;
   }
 };
+
+export const fetchHasilUjianSafe = async (endpoint) => {
+  try {
+    const token = sessionStorage.getItem('token');
+    const response = await axios.get(`${baseURL}/${endpoint}`, {
+      headers: { Authorization: `Bearer ${token}` },
+    });
+    return response.data;
+  } catch (error) {
+    // Tidak tampilkan toast di sini
+    return null;
+  }
+};

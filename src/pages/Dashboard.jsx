@@ -108,7 +108,7 @@ const Dashboard = () => {
         <div className="col">
           <div
             className="card text-center h-100 menu-card"
-            onClick={() => navigateTo('/hasil-ujian')}
+            onClick={() => navigateTo('/ujian')}
           >
             <div className="card-body">
               <i className="fas fa-poll fa-3x mb-3"></i>
