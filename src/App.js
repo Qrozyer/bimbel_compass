@@ -37,6 +37,7 @@ import SesiUjianFormPage from './pages/sesiUjian/SesiUjianFormPage';
 
 import SesiSoal from './pages/sesiSoal/SesiSoal';
 import SesiSoalForm from './pages/sesiSoal/SesiSoalForm';
+import SoalMateriForm from './pages/materi/SoalMateriForm';
 
 import SesiSoalPeserta from './pages/sesiUjian/SesiSoalPeserta';
 import SesiujianPeserta from './pages/sesiUjian/SesiUjianPeserta';
@@ -48,8 +49,11 @@ import PesertaBidang from './pages/peserta/PesertaBidang';
 import TambahPesertaBidang from './pages/peserta/TambahPesertaBidang';
 import EditPesertaBidang from './pages/peserta/EditPesertaBidang';
 
+import Ujian from './pages/laporanUjian/Ujian';
 import HasilUjian from './pages/laporanUjian/HasilUjian';
 import HasilDetailUjian from './pages/laporanUjian/HasilDetailUjian';
+import LaporanUjianMateri from './pages/laporanUjian/LaporanUjianMateri';
+import HasilMateri from './pages/laporanUjian/HasilMateri';
 
 
 function App() {
@@ -92,6 +96,8 @@ function App() {
             
             <Route path="/soal/section/:sectionId" element={<SesiSoal />} /> {/* Rute untuk sesi soal ujian */}
             <Route path="/soal-list/:sectionId" element={<SesiSoalForm />} /> {/* Rute untuk form sesi soal ujian */}
+            <Route path="/soal-materi/add/:MateriId" element={<SoalMateriForm />} />
+
 
             <Route path="/soal-peserta/section/:sectionId" element={<SesiSoalPeserta />} /> {/* Rute untuk sesi soal peserta ujian */}
             <Route path="/peserta/section/:sectionId" element={<SesiujianPeserta />} /> {/* Rute untuk sesi peserta ujian */}
@@ -104,8 +110,11 @@ function App() {
             <Route path="/peserta/section/add/:sectionId" element={<TambahSesiPeserta />} /> {/* Rute untuk menambah peserta ke sesi ujian */}
 
             {/* Rute untuk halaman hasil ujian */}  
-            <Route path="/ujian" element={<HasilUjian />} />          
+            <Route path="/ujian" element={<Ujian />} /> {/* Rute untuk hasil ujian */}
+            <Route path="/hasil-ujian" element={<HasilUjian />} />          
             <Route path="/hasil/ujian/:sectionId" element={<HasilDetailUjian />} />  
+            <Route path="/laporan-materi" element={<HasilMateri />} />
+            <Route path="/laporan-materi/:materiid" element={<LaporanUjianMateri />} /> {/* Rute untuk laporan ujian materi */}
 
             {/* Rute untuk halaman tidak ditemukan */}  
             <Route path="*" element={<NotFound />} />

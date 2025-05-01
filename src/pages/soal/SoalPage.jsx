@@ -1,37 +1,54 @@
 import React, { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useParams, useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
-import { setSoal } from '../../actions/soalActions';  // Pastikan action setSoal ada
+import { setSoal } from '../../actions/soalActions';
 import { fetchData, deleteData } from '../../utils/api';
-import SoalTable from '../../components/soal/SoalTable';  // Import komponen SoalTable
-import { useNavigate } from 'react-router-dom';
+import SoalTable from '../../components/soal/SoalTable';
 import Swal from 'sweetalert2';
 
 const SoalPage = () => {
-  const { id } = useParams();  // Mengambil MateriId dari URL
-  const [soal, setSoalData] = useState([]);  // State untuk daftar soal
+  const { id } = useParams();
+  const [soal, setSoalData] = useState([]);
+  const [materiJudul, setMateriJudul] = useState('');
   const dispatch = useDispatch();
-  const navigate = useNavigate(); // Menyiapkan navigasi untuk pindah ke halaman soal
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDataSoal = async () => {
       try {
-        const data = await fetchData('soal');  // Fetch data soal
-        if (data) {
-          // Filter soal berdasarkan MateriId yang dipilih
-          const filteredSoal = data.filter((item) => item.MateriId === parseInt(id));
-          setSoalData(filteredSoal);
-          dispatch(setSoal(filteredSoal));  // Menyimpan data soal ke Redux
-        }
+        // 1. Ambil data relasi soal untuk materi tertentu
+        const relasi = await fetchData(`materi/soal/${id}`);
+        const soalIds = relasi.map(item => item.SoalId); // Ambil hanya ID soal
+    
+        // 2. Ambil semua soal (berisi data lengkap)
+        const semuaSoal = await fetchData('soal');
+    
+        // 3. Filter soal berdasarkan ID dari relasi
+        const filteredSoal = semuaSoal.filter(item => soalIds.includes(item.SoalId));
+    
+        setSoalData(filteredSoal);
+        dispatch(setSoal(filteredSoal));
       } catch (error) {
-        console.error('Error fetching data soal:', error);
+        console.error('Error fetching soal:', error);
       }
     };
+
+    const fetchMateri = async () => {
+      try {
+        const materi = await fetchData(`materi/pilih/${id}`);
+        if (materi) {
+          setMateriJudul(materi.MateriJudul);
+        }
+      } catch (error) {
+        console.error('Error fetching materi:', error);
+      }
+    };
+
     fetchDataSoal();
+    fetchMateri();
   }, [id, dispatch]);
 
-  // Fungsi untuk menangani penghapusan soal
-  const handleDelete = async (id) => {
+  const handleDelete = async (idSoal) => {
     Swal.fire({
       title: 'Apakah Anda yakin?',
       text: 'Data yang dihapus tidak bisa dikembalikan!',
@@ -41,48 +58,31 @@ const SoalPage = () => {
       cancelButtonText: 'Batal',
     }).then(async (result) => {
       if (result.isConfirmed) {
-        // Panggil delete API
-        await deleteData('soal', id);  
-        dispatch(setSoal(soal.filter((item) => item.SoalId !== id)));  // Memperbarui state Redux
+        await deleteData('soal', idSoal);
+        dispatch(setSoal(soal.filter((item) => item.SoalId !== idSoal)));
         Swal.fire('Terhapus!', 'Data soal telah dihapus.', 'success');
       }
     });
   };
 
-  // Jika tidak ada soal untuk MateriId yang diberikan
   if (!soal.length) return (
     <div className="pt-4 mb-4 ml-3">
-      <h1 className="ml-3 mb-3">Soal untuk Materi: {id}</h1>
-      <button 
-        className="btn btn-secondary mb-4 ml-3" 
-        onClick={() => navigate(-1)} // Navigasi ke halaman sebelumnya
-      >
-        Kembali
-      </button>
-      <button className="btn btn-success mb-4 ml-3" onClick={() => navigate(`/soal/add`)}>
-        Tambah Soal
-      </button>
+      <h1 className="ml-3 mb-3">Soal untuk Materi: {materiJudul || id}</h1>
+      <button className="btn btn-secondary mb-4 ml-3" onClick={() => navigate(-1)}>Kembali</button>
+      <button className="btn btn-success mb-4 ml-3" onClick={() => navigate(`/soal/add`)}>Tambah Soal</button>
     </div>
   );
 
   return (
     <div className="pt-4 mb-4 ml-4">
-      <h1 className="ml-3 mb-3">Soal untuk Materi: {id}</h1>
-      
-      <button 
-        className="btn btn-secondary mb-4 ml-3" 
-        onClick={() => navigate(-1)} // Navigasi ke halaman sebelumnya
-      >
-        Kembali
-      </button>
+      <h1 className="ml-3 mb-3">Soal untuk Materi: {materiJudul || id}</h1>
 
-      <button className="btn btn-success mb-4 ml-3" onClick={() => navigate(`/soal/add`)}>
-        Tambah Soal
-      </button>
-      
+      <button className="btn btn-secondary mb-4 ml-3" onClick={() => navigate(-1)}>Kembali</button>
+      <button className="btn btn-success mb-4 ml-3" onClick={() => navigate(`/soal-materi/add/${id}`)}>Masukkan Soal Untuk Materi</button>
+
       <SoalTable 
-        data={soal} 
-        onEdit={(item) => navigate(`/soal/edit/${item.SoalId}`)} 
+        data={soal}
+        onEdit={(item) => navigate(`/soal/edit/${item.SoalId}`)}
         onDelete={handleDelete}
       />
     </div>

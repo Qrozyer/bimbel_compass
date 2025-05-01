@@ -39,6 +39,11 @@ const BidangPage = () => {
       <button className="btn btn-secondary mb-4 ml-3" onClick={() => navigate(-1)}>
         Kembali
       </button>
+      <button className="btn btn-primary mb-4 ml-3" onClick={() => navigate('/soal/add')}>
+        Buat Soal Baru
+      </button>
+      <h3 className="ml-4 mb-4">Tambah Soal Berdasarkan Materi</h3>
+      <h5 className="ml-4 mb-4 text-secondary">Pilih Bidang</h5>
       <BidangTableDashboard 
         data={bidang}         
       />
