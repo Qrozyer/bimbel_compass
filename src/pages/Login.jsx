@@ -5,6 +5,11 @@ import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
 const baseURL = process.env.REACT_APP_BASE_URL;
+const USER = process.env.REACT_APP_USER;
+const PASS = process.env.REACT_APP_PASS;
+const USER_VALUE = process.env.REACT_APP_USER_VALUE;
+const PASS_VALUE = process.env.REACT_APP_PASS_VALUE;
+
 
 function Login() {
   const [username, setUsername] = useState('');
@@ -20,8 +25,8 @@ function Login() {
         const res = await axios.get(`${baseURL}/token`, {
           headers: {
             'Content-Type': 'application/json',
-            'x-username': 'test',
-            'x-password': 'testing',
+            [USER]: USER_VALUE,
+            [PASS]: PASS_VALUE,
           },
         });
 
@@ -67,7 +72,7 @@ function Login() {
       <div className="login-box">
         <div className="card card-outline card-primary">
           <div className="card-header text-center">
-            <p className="h1">Bimbel Compass</p>
+            <p className="h1">Bimbel ByPASS</p>
           </div>
           <div className="card-body">
             <p className="login-box-msg">Login With Your Account</p>
