@@ -1,11 +1,10 @@
 import React from 'react';
 
-const MateriTable = ({ data, onEdit, onDelete }) => {
-  if (!data || !Array.isArray(data)) { 
-    return <div>Data kosong</div>; // Atau tampilkan pesan lain
+const MateriTable = ({ data, onEdit, onDelete, onSoal, onDetail }) => {
+  if (!data || !Array.isArray(data)) {
+    return <div>Data kosong</div>;
   }
 
-  console.log("MateriTable data:", data);
   return (
     <div className="table-responsive">
       <table className="table table-bordered table-striped">
@@ -24,10 +23,32 @@ const MateriTable = ({ data, onEdit, onDelete }) => {
               <td>{item.MateriJudul}</td>
               <td dangerouslySetInnerHTML={{ __html: item.MateriIsi }}></td>
               <td>
-                <button className="btn btn-warning btn-sm me-2" onClick={() => onEdit(item)}>
+                <button
+                  className="btn btn-info btn-sm me-2"
+                  title="Lihat Detail"
+                  onClick={() => onDetail(item)}
+                >
+                  <i className="fas fa-eye"></i> Detail
+                </button>
+                <button
+                  className="btn btn-primary btn-sm me-2"
+                  title="Lihat Soal"
+                  onClick={() => onSoal(item)}
+                >
+                  <i className="fas fa-file-alt"></i> Soal
+                </button>
+                <button
+                  className="btn btn-warning btn-sm me-2"
+                  title="Edit Materi"
+                  onClick={() => onEdit(item)}
+                >
                   <i className="fas fa-edit"></i> Edit
                 </button>
-                <button className="btn btn-danger btn-sm" onClick={() => onDelete(item.MateriId)}>
+                <button
+                  className="btn btn-danger btn-sm"
+                  title="Hapus Materi"
+                  onClick={() => onDelete(item.MateriId)}
+                >
                   <i className="fas fa-trash-alt"></i> Hapus
                 </button>
               </td>

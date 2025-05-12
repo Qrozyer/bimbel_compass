@@ -1,11 +1,10 @@
 import React from 'react';
 
-const SubBidangTable = ({ data, onEdit, onDelete }) => {
+const SubBidangTable = ({ data, onEdit, onDelete, onDetail }) => {
   if (!data || !Array.isArray(data)) { 
-    return <div>Data kosong</div>; // Atau tampilkan pesan lain
+    return <div>Data kosong</div>;
   }
 
-  console.log("SubBidangTable data:", data);
   return (
     <div className="table-responsive">
       <table className="table table-bordered table-striped">
@@ -24,6 +23,9 @@ const SubBidangTable = ({ data, onEdit, onDelete }) => {
               <td>{item.SubNama}</td>
               <td dangerouslySetInnerHTML={{ __html: item.SubKeterangan }}></td>
               <td>
+                <button className="btn btn-info btn-sm me-2" onClick={() => onDetail?.(item)}>
+                  <i className="fas fa-eye"></i> Detail
+                </button>
                 <button className="btn btn-warning btn-sm me-2" onClick={() => onEdit(item)}>
                   <i className="fas fa-edit"></i> Edit
                 </button>

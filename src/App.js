@@ -55,6 +55,10 @@ import HasilDetailUjian from './pages/laporanUjian/HasilDetailUjian';
 import LaporanUjianMateri from './pages/laporanUjian/LaporanUjianMateri';
 import HasilMateri from './pages/laporanUjian/HasilMateri';
 
+import SubBidangByBidangPage from './pages/subBidang/SubBidangByBidang';
+import MateriBySubBidang from './pages/materi/MateriBySubBidang';
+
+import SoalByMateri from './pages/materi/SoalByMateri';
 
 function App() {
   return (
@@ -72,15 +76,22 @@ function App() {
             <Route path="/bidang-list" element={<BidangListPage />} />      
             <Route path="/bidang/add" element={<BidangFormPage />} />
             <Route path="/bidang/edit/:id" element={<BidangFormPage />} />
+
             <Route path="/sub-bidang" element={<SubBidangListPage />} />      
             <Route path="/sub-bidang/add" element={<SubBidangFormPage />} />
             <Route path="/sub-bidang/edit/:id" element={<SubBidangFormPage />} />   
+            <Route path="/sub-bidang/by-bidang/:bidangId" element={<SubBidangByBidangPage />} />
+
             <Route path="/materi" element={<MateriListPage />} />
             <Route path="/materi/add" element={<MateriFormPage />} />
             <Route path="/materi/edit/:id" element={<MateriFormPage />} /> 
+            <Route path="/materi/by-sub-bidang/:subId" element={<MateriBySubBidang />} /> {/* Rute untuk materi berdasarkan SubId */}
+            <Route path="/soal/by-materi/:materiId" element={<SoalByMateri />} /> {/* Rute untuk soal berdasarkan MateriId */}
+
             <Route path="/soal" element={<SoalListPage />} />
             <Route path="/soal/add" element={<SoalFormPage />} />
             <Route path="/soal/edit/:id" element={<SoalFormPage />} />
+
             <Route path="/peserta" element={<PesertaListPage />} />
             <Route path="/peserta/add" element={<PesertaFormPage />} />
             <Route path="/peserta/edit/:id" element={<PesertaFormPage />} />      
@@ -97,6 +108,7 @@ function App() {
             <Route path="/soal/section/:sectionId" element={<SesiSoal />} /> {/* Rute untuk sesi soal ujian */}
             <Route path="/soal-list/:sectionId" element={<SesiSoalForm />} /> {/* Rute untuk form sesi soal ujian */}
             <Route path="/soal-materi/add/:MateriId" element={<SoalMateriForm />} />
+            <Route path="/soal-materi/edit/:MateriId" element={<SoalMateriForm />} /> {/* Rute untuk form sesi soal ujian */}
 
 
             <Route path="/soal-peserta/section/:sectionId" element={<SesiSoalPeserta />} /> {/* Rute untuk sesi soal peserta ujian */}

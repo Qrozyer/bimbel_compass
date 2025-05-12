@@ -40,10 +40,13 @@ const SubBidangListPage = () => {
 
   return (
     <div style={{ margin: '20px auto', padding: '20px', maxWidth: '1200px' }}>
+      <button className="btn btn-secondary mb-3 ms-2" onClick={() => navigate(-1)}>
+              Kembali
+      </button>
       <button className="btn btn-success mb-3" onClick={() => navigate('/sub-bidang/add')}>
         Tambah Data Sub Bidang
       </button>
-      <SubBidangTable data={subBidang} onEdit={(item) => navigate(`/sub-bidang/edit/${item.SubId}`)} onDelete={handleDelete} />
+      <SubBidangTable data={subBidang} onEdit={(item) => navigate(`/sub-bidang/edit/${item.SubId}`)} onDelete={handleDelete} onDetail={(item) => navigate(`/materi/by-sub-bidang/${item.SubId}`)} />
     </div>
   );
 };

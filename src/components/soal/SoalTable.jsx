@@ -37,7 +37,7 @@ const SoalTable = ({ data, onEdit, onDelete }) => {
               <td>{item.SoalJawaban}</td>
               <td dangerouslySetInnerHTML={{ __html: item.SoalPembahasan }}></td>
               <td>{item.SoalVideo}</td>
-              <td>
+              <td width="200">
                 <button className="btn btn-warning btn-sm me-2" onClick={() => onEdit(item)}>
                   <i className="fas fa-edit"></i> Edit
                 </button>

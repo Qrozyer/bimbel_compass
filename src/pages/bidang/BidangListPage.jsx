@@ -9,11 +9,11 @@ import { useNavigate } from 'react-router-dom';
 const BidangListPage = () => {
   const dispatch = useDispatch();
   const bidang = useSelector((state) => state.bidang.bidang);
-  const navigate = useNavigate(); // Ganti useHistory() dengan useNavigate()
+  const navigate = useNavigate();
 
   useEffect(() => {
     const fetchDataBidang = async () => {
-      const data = await fetchData('bidang'); // Tambahkan endpoint 'bidang'
+      const data = await fetchData('bidang');
       if (data) {
         dispatch(setBidang(data));
       }
@@ -31,7 +31,7 @@ const BidangListPage = () => {
       cancelButtonText: 'Batal',
     }).then(async (result) => {
       if (result.isConfirmed) {
-        await deleteData('bidang', id); // Ganti deleteBidangApi dengan deleteData dan endpoint 'bidang'
+        await deleteData('bidang', id);
         dispatch(setBidang(bidang.filter((item) => item.BidangId !== id)));
         Swal.fire('Terhapus!', 'Data bidang telah dihapus.', 'success');
       }
@@ -40,10 +40,21 @@ const BidangListPage = () => {
 
   return (
     <div style={{ margin: '20px auto', padding: '20px', maxWidth: '1200px' }}>
-      <button className="btn btn-success mb-3" onClick={() => navigate('/bidang/add')}>
-        Tambah Data Bidang
-      </button>
-      <BidangTable data={bidang} onEdit={(item) => navigate(`/bidang/edit/${item.BidangId}`)} onDelete={handleDelete} />
+     <div className="d-flex justify-content-start gap-2 mb-3">
+  <button className="btn btn-secondary" onClick={() => navigate(-1)}>
+    ← Kembali
+  </button>
+  <button className="btn btn-success" onClick={() => navigate('/bidang/add')}>
+    Tambah Data Bidang
+  </button>
+</div>
+
+      <BidangTable
+        data={bidang}
+        onEdit={(item) => navigate(`/bidang/edit/${item.BidangId}`)}
+        onDelete={handleDelete}
+        onDetail={(item) => navigate(`/sub-bidang/by-bidang/${item.BidangId}`)}
+      />
     </div>
   );
 };
