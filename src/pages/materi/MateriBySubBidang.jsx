@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { fetchData, deleteData } from '../../utils/api';
 import MateriTable from '../../components/materi/MateriTable';
 import { useNavigate, useParams } from 'react-router-dom';
+import HierarkiNavigation from '../../components/HierarkiNavigation';
 
 const MateriBySubBidang = () => {
   const dispatch = useDispatch();
@@ -40,22 +41,31 @@ const MateriBySubBidang = () => {
   };
 
   return (
-    <div style={{ margin: '20px auto', padding: '20px', maxWidth: '1200px' }}>
-      <button className="btn btn-secondary mb-3 mr-2" onClick={() => navigate(-1)}>
-      ← Kembali
-      </button>
-      <button className="btn btn-success mb-3" onClick={() => navigate(`/materi/add/${subId}`)}>
-        Tambah Data Materi
-      </button>
-      <MateriTable
-        data={materi}
-        onEdit={(item) => navigate(`/materi/edit/${item.MateriId}`)}
-        onDelete={handleDelete}
-        onDetail={(item) => navigate(`/materi/detail/${item.MateriId}`)}
-        onSoal={(item) => navigate(`/soal/by-materi/${item.MateriId}`)}
-      />
+    <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', padding: '20px' }}>
+      <HierarkiNavigation current="materi" subId={subId} />
+  
+      <div style={{ flex: 1 }}>
+        <button className="btn btn-secondary mb-3 me-2" onClick={() => navigate(-1)}>
+          ← Kembali
+        </button>
+        <button
+          className="btn btn-success mb-3"
+          onClick={() => navigate(`/materi/add/${subId}`)}
+        >
+          Tambah Data Materi
+        </button>
+  
+        <MateriTable
+          data={materi}
+          onEdit={(item) => navigate(`/materi/edit/${item.MateriId}`)}
+          onDelete={handleDelete}
+          onDetail={(item) => navigate(`/materi/detail/${item.MateriId}`)}
+          onSoal={(item) => navigate(`/soal/by-materi/${item.MateriId}`)}
+        />
+      </div>
     </div>
   );
+  
 };
 
 export default MateriBySubBidang;

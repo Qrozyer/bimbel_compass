@@ -5,6 +5,7 @@ import { setSubBidang } from '../../actions/subBidangActions';
 import Swal from 'sweetalert2';
 import { fetchData, deleteData } from '../../utils/api';
 import SubBidangTable from '../../components/subBidang/SubBidangTable';
+import HierarkiNavigation from '../../components/HierarkiNavigation';
 
 const SubBidangByBidangPage = () => {
   const { bidangId } = useParams();
@@ -44,22 +45,31 @@ const SubBidangByBidangPage = () => {
   };
 
   return (
-    <div style={{ margin: '20px auto', padding: '20px', maxWidth: '1200px' }}>
-      <h3>Daftar Sub Bidang Berdasarkan Bidang ID: {bidangId}</h3>
-      <button className="btn btn-secondary mb-3 me-2" onClick={() => navigate(-1)}>
-      ← Kembali
-      </button>
-      <button className="btn btn-success mb-3" onClick={() => navigate(`/sub-bidang/add?bidangId=${bidangId}`)}>
-        Tambah Sub Bidang
-      </button>
-      <SubBidangTable
-        data={subBidang}
-        onEdit={(item) => navigate(`/sub-bidang/edit/${item.SubId}`)}
-        onDelete={handleDelete}
-        onDetail={(item) => navigate(`/materi/by-sub-bidang/${item.SubId}`)}
-      />
+    <div style={{ display: 'flex', gap: '20px', alignItems: 'flex-start', padding: '20px' }}>
+      <HierarkiNavigation style={{ width: '200px' }} current="sub" bidangId={bidangId} />
+      
+      <div style={{ flex: 1 }}>
+        <h3>Daftar Sub Bidang Berdasarkan Bidang ID: {bidangId}</h3>
+        <button className="btn btn-secondary mb-3 me-2" onClick={() => navigate(-1)}>
+          ← Kembali
+        </button>
+        <button
+          className="btn btn-success mb-3"
+          onClick={() => navigate(`/sub-bidang/add?bidangId=${bidangId}`)}
+        >
+          Tambah Sub Bidang
+        </button>
+        
+        <SubBidangTable
+          data={subBidang}
+          onEdit={(item) => navigate(`/sub-bidang/edit/${item.SubId}`)}
+          onDelete={handleDelete}
+          onDetail={(item) => navigate(`/materi/by-sub-bidang/${item.SubId}`)}
+        />
+      </div>
     </div>
   );
+  
 };
 
 export default SubBidangByBidangPage;

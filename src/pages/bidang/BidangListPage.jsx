@@ -5,6 +5,7 @@ import Swal from 'sweetalert2';
 import { fetchData, deleteData } from '../../utils/api'; 
 import BidangTable from '../../components/bidang/BidangTable';
 import { useNavigate } from 'react-router-dom'; 
+import HierarkiNavigation from '../../components/HierarkiNavigation';
 
 const BidangListPage = () => {
   const dispatch = useDispatch();
@@ -39,7 +40,9 @@ const BidangListPage = () => {
   };
 
   return (
-    <div style={{ margin: '20px auto', padding: '20px', maxWidth: '1200px' }}>
+    <div style={{ display: 'flex' }}>
+      <HierarkiNavigation current="bidang"/>
+      <div style={{ margin: '20px auto', padding: '20px', maxWidth: '1200px' }}>
      <div className="d-flex justify-content-start gap-2 mb-3">
   <button className="btn btn-secondary" onClick={() => navigate(-1)}>
     ← Kembali
@@ -55,6 +58,7 @@ const BidangListPage = () => {
         onDelete={handleDelete}
         onDetail={(item) => navigate(`/sub-bidang/by-bidang/${item.BidangId}`)}
       />
+    </div>
     </div>
   );
 };

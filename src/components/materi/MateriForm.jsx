@@ -8,13 +8,15 @@ import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 const MateriForm = ({ initialData, onSave, onCancel }) => {
   const [MateriJudul, setMateriJudul] = useState(String(initialData?.MateriJudul || ''));
   const [editorData, setEditorData] = useState(String(initialData?.MateriIsi || ''));
-  const [subBidangList, setSubBidangList] = useState([]); // State untuk menyimpan data subBidang
-  const [selectedSubBidang, setSelectedSubBidang] = useState(initialData?.SubId || ''); // State untuk menyimpan subBidang yang dipilih
+  const [videoUrl, setVideoUrl] = useState(initialData?.MateriVideo || '');
+  const [subBidangList, setSubBidangList] = useState([]);
+  const [selectedSubBidang, setSelectedSubBidang] = useState(initialData?.SubId || '');
   const editorRef = useRef(null);
 
   useEffect(() => {
     setMateriJudul(String(initialData?.MateriJudul || ''));
     setEditorData(String(initialData?.MateriIsi || ''));
+    setVideoUrl(initialData?.MateriVideo || '');
 
     const fetchSubBidangData = async () => {
       const subBidangData = await fetchData('sub-bidang');
@@ -25,7 +27,6 @@ const MateriForm = ({ initialData, onSave, onCancel }) => {
     fetchSubBidangData();
   }, [initialData]);
 
-
   const handleEditorChange = (event, editor) => {
     setEditorData(editor.getData());
   };
@@ -35,7 +36,12 @@ const MateriForm = ({ initialData, onSave, onCancel }) => {
       Swal.fire('Error', 'Semua field harus diisi!', 'error');
       return;
     }
-    onSave({ MateriJudul, MateriIsi: editorData, SubId: parseInt(selectedSubBidang) });
+    onSave({
+      MateriJudul,
+      MateriIsi: editorData,
+      SubId: parseInt(selectedSubBidang),
+      MateriVideo: videoUrl
+    });
   };
 
   return (
@@ -67,6 +73,16 @@ const MateriForm = ({ initialData, onSave, onCancel }) => {
           />
         </div>
         <div className="form-group">
+          <label>URL Video</label>
+          <input
+            type="text"
+            className="form-control"
+            value={videoUrl}
+            onChange={(e) => setVideoUrl(e.target.value)}
+            placeholder="example: https://www.youtube.com/embed/xxxxx"
+          />
+        </div>
+        <div className="form-group">
           <label>Isi Materi</label>
           <div id="editor">
             <CKEditor
@@ -74,7 +90,9 @@ const MateriForm = ({ initialData, onSave, onCancel }) => {
               config={editorConfig}
               data={editorData}
               onChange={handleEditorChange}
-              onReady={(editor) => { editorRef.current = editor; }}
+              onReady={(editor) => {
+                editorRef.current = editor;
+              }}
             />
           </div>
         </div>

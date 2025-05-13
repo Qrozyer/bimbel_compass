@@ -59,6 +59,7 @@ import SubBidangByBidangPage from './pages/subBidang/SubBidangByBidang';
 import MateriBySubBidang from './pages/materi/MateriBySubBidang';
 
 import SoalByMateri from './pages/materi/SoalByMateri';
+import MateriDetail from './pages/materi/MateriDetail';
 
 function App() {
   return (
@@ -86,6 +87,7 @@ function App() {
             <Route path="/materi/add" element={<MateriFormPage />} />
             <Route path="/materi/edit/:id" element={<MateriFormPage />} /> 
             <Route path="/materi/by-sub-bidang/:subId" element={<MateriBySubBidang />} /> {/* Rute untuk materi berdasarkan SubId */}
+            <Route path="/materi/detail/:materiId" element={<MateriDetail />} /> {/* Rute untuk detail materi */}
             <Route path="/soal/by-materi/:materiId" element={<SoalByMateri />} /> {/* Rute untuk soal berdasarkan MateriId */}
 
             <Route path="/soal" element={<SoalListPage />} />
