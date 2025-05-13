@@ -3,31 +3,46 @@ import { fetchData } from '../../utils/api';
 import Swal from 'sweetalert2';
 
 const PesertaForm = ({ initialData, onSave, onCancel }) => {
-  const [PesertaNama, setPesertaNama] = useState(String(initialData?.PesertaNama || ''));
-  const [PesertaEmail, setPesertaEmail] = useState(String(initialData?.PesertaEmail || ''));
-  const [PesertaJk, setPesertaJk] = useState(initialData?.PesertaJk || 'L');
-  const [PesertaAlamat, setPesertaAlamat] = useState(String(initialData?.PesertaAlamat || ''));
-  const [PesertaNohp, setPesertaNohp] = useState(String(initialData?.PesertaNohp || ''));
-  const [PesertaPendidikan, setPesertaPendidikan] = useState(String(initialData?.PesertaPendidikanTerakhir || ''));
-  const [PesertaAsalSekolah, setPesertaAsalSekolah] = useState(String(initialData?.PesertaAsalSekolah || ''));
-//   const [PesertaPassword, setPesertaPassword] = useState(String(initialData?.PesertaPassword || ''));
-  const [PesertaPeriode, setPesertaPeriode] = useState(initialData?.PesertaPeriode || '');
-  const [PesertaList, setPesertaList] = useState([]);
+  const [PesertaNama, setPesertaNama] = useState('');
+  const [PesertaEmail, setPesertaEmail] = useState('');
+  const [PesertaJk, setPesertaJk] = useState('L');
+  const [PesertaAlamat, setPesertaAlamat] = useState('');
+  const [PesertaNohp, setPesertaNohp] = useState('');
+  const [PesertaPendidikanTerakhir, setPesertaPendidikanTerakhir] = useState('');
+  const [PesertaAsalSekolah, setPesertaAsalSekolah] = useState('');
+  const [PesertaPeriode, setPesertaPeriode] = useState('');
+  const [asalPesertaList, setAsalPesertaList] = useState([]);
+  const [periodeList, setPeriodeList] = useState([]);
 
+  // Set initial data on mount or when props change
   useEffect(() => {
     setPesertaNama(String(initialData?.peserta_nama || ''));
     setPesertaEmail(String(initialData?.peserta_email || ''));
     setPesertaJk(initialData?.peserta_jk || 'L');
     setPesertaAlamat(String(initialData?.peserta_alamat || ''));
     setPesertaNohp(String(initialData?.peserta_nohp || ''));
-    setPesertaPendidikan(String(initialData?.peserta_pendidikanterakhir || ''));
+    setPesertaPendidikanTerakhir(String(initialData?.peserta_pendidikanterakhir || ''));
     setPesertaAsalSekolah(String(initialData?.peserta_asalsekolah || ''));
-    // setPesertaPassword(String(initialData?.peserta_password || ''));
     setPesertaPeriode(initialData?.peserta_periode || '');
   }, [initialData]);
 
+  // Fetch asal peserta dan periode
+  useEffect(() => {
+    const fetchDropdownData = async () => {
+      try {
+        const asalResponse = await fetchData('/peserta/asal');
+        const periodeResponse = await fetchData('/periode');
+        setAsalPesertaList(asalResponse);
+        setPeriodeList(periodeResponse);
+      } catch (error) {
+        Swal.fire('Error', 'Gagal memuat data dropdown.', 'error');
+      }
+    };
+    fetchDropdownData();
+  }, []);
+
   const handleSave = () => {
-    if (!PesertaNama || !PesertaEmail || !PesertaJk || !PesertaAlamat || !PesertaNohp || !PesertaPendidikan || !PesertaAsalSekolah) {
+    if (!PesertaNama || !PesertaEmail || !PesertaJk || !PesertaAlamat || !PesertaNohp || !PesertaPendidikanTerakhir || !PesertaAsalSekolah || !PesertaPeriode) {
       Swal.fire('Error', 'Semua field harus diisi!', 'error');
       return;
     }
@@ -38,108 +53,77 @@ const PesertaForm = ({ initialData, onSave, onCancel }) => {
       PesertaJk,
       PesertaAlamat,
       PesertaNohp,
-      PesertaPendidikan,
+      PesertaPendidikanTerakhir,
       PesertaAsalSekolah,
-    //   PesertaPassword,
       PesertaPeriode,
     });
   };
 
   return (
-    console.log("PesertaForm initialData:", initialData),
     <div className="form-container card">
       <div className="card-body">
         <h4>{initialData ? 'Edit Peserta' : 'Tambah Peserta'}</h4>
+
+        <div className="form-group">
+          <label>Asal Peserta</label>
+          <select className="form-control" value={PesertaAsalSekolah} onChange={(e) => setPesertaAsalSekolah(e.target.value)}>
+            <option value="">Pilih Asal Peserta</option>
+            {asalPesertaList.map((asal, index) => (
+              <option key={index} value={asal.AsalDaerah}>
+                {asal.AsalDaerah}
+              </option>
+            ))}
+          </select>
+        </div>
+
+        <div className="form-group">
+          <label>Periode</label>
+          <select className="form-control" value={PesertaPeriode} onChange={(e) => setPesertaPeriode(e.target.value)}>
+            <option value="">Pilih Periode</option>
+            {periodeList.map((periode, index) => (
+              <option key={index} value={periode.PeriodeNama}>
+                {periode.PeriodeNama}
+              </option>
+            ))}
+          </select>
+        </div>
+
         <div className="form-group">
           <label>Nama Peserta</label>
-          <input
-            type="text"
-            className="form-control"
-            value={PesertaNama}
-            onChange={(e) => setPesertaNama(e.target.value)}
-          />
+          <input type="text" className="form-control" value={PesertaNama} onChange={(e) => setPesertaNama(e.target.value)} />
         </div>
+
         <div className="form-group">
           <label>Email Peserta</label>
-          <input
-            type="email"
-            className="form-control"
-            value={PesertaEmail}
-            onChange={(e) => setPesertaEmail(e.target.value)}
-          />
+          <input type="email" className="form-control" value={PesertaEmail} onChange={(e) => setPesertaEmail(e.target.value)} />
         </div>
-        {/* <div className="form-group">
-          <label>Password Peserta</label>
-          <input
-            type="text"
-            className="form-control"
-            value={PesertaPassword}
-            onChange={(e) => setPesertaPassword(e.target.value)}
-          />
-        </div> */}
+
         <div className="form-group">
           <label>Jenis Kelamin</label>
-          <select
-            className="form-control"
-            value={PesertaJk}
-            onChange={(e) => setPesertaJk(e.target.value)}
-          >
+          <select className="form-control" value={PesertaJk} onChange={(e) => setPesertaJk(e.target.value)}>
             <option value="L">Laki-laki</option>
             <option value="P">Perempuan</option>
           </select>
         </div>
+
         <div className="form-group">
           <label>Alamat</label>
-          <input
-            type="text"
-            className="form-control"
-            value={PesertaAlamat}
-            onChange={(e) => setPesertaAlamat(e.target.value)}
-          />
+          <input type="text" className="form-control" value={PesertaAlamat} onChange={(e) => setPesertaAlamat(e.target.value)} />
         </div>
+
         <div className="form-group">
           <label>No HP</label>
-          <input
-            type="text"
-            className="form-control"
-            value={PesertaNohp}
-            onChange={(e) => setPesertaNohp(e.target.value)}
-          />
+          <input type="text" className="form-control" value={PesertaNohp} onChange={(e) => setPesertaNohp(e.target.value)} />
         </div>
+
         <div className="form-group">
           <label>Pendidikan Terakhir</label>
-          <input
-            type="text"
-            className="form-control"
-            value={PesertaPendidikan}
-            onChange={(e) => setPesertaPendidikan(e.target.value)}
-          />
+          <input type="text" className="form-control" value={PesertaPendidikanTerakhir} onChange={(e) => setPesertaPendidikanTerakhir(e.target.value)} />
         </div>
-        <div className="form-group">
-          <label>Asal Sekolah</label>
-          <input
-            type="text"
-            className="form-control"
-            value={PesertaAsalSekolah}
-            onChange={(e) => setPesertaAsalSekolah(e.target.value)}
-          />
-        </div>
-        <div className="form-group">
-          <label>Periode</label>
-          <input
-            type="text"
-            className="form-control"
-            value={PesertaPeriode}
-            onChange={(e) => setPesertaPeriode(e.target.value)}
-          />
-        </div>
-        <div className="form-group">
-          <button className="btn btn-secondary mr-2" onClick={onCancel}>
-            Batal
-          </button>
-          <button className="btn btn-primary" onClick={handleSave}>
-            Simpan
-          </button>
+
+        <div className="form-group mt-3">
+          <button className="btn btn-secondary mr-2" onClick={onCancel}>Batal</button>
+          <button className="btn btn-primary" onClick={handleSave}>Simpan</button>
         </div>
       </div>
     </div>
