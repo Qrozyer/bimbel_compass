@@ -61,6 +61,12 @@ import MateriBySubBidang from './pages/materi/MateriBySubBidang';
 import SoalByMateri from './pages/materi/SoalByMateri';
 import MateriDetail from './pages/materi/MateriDetail';
 
+import AsalPesertaList from './pages/asalPeserta/AsalPesertaList';
+import AsalPesertaForm from './pages/asalPeserta/AsalPesertaForm';
+
+import PeriodeList from './pages/periode/PeriodeList';
+import PeriodeForm from './pages/periode/PeriodeForm';
+
 function App() {
   return (
     <Router>
@@ -130,6 +136,11 @@ function App() {
             <Route path="/laporan-materi" element={<HasilMateri />} />
             <Route path="/laporan-materi/:materiid" element={<LaporanUjianMateri />} /> {/* Rute untuk laporan ujian materi */}
 
+            <Route path="/asal-peserta" element={<AsalPesertaList />} /> {/* Rute untuk asal peserta */}
+            <Route path="/asal-peserta/add" element={<AsalPesertaForm />} /> {/* Rute untuk form asal peserta */}            
+
+            <Route path="/periode" element={<PeriodeList />} /> {/* Rute untuk periode */}
+            <Route path="/periode/add" element={<PeriodeForm />} /> {/* Rute untuk form periode */}            
             {/* Rute untuk halaman tidak ditemukan */}  
             <Route path="*" element={<NotFound />} />
           </Route>

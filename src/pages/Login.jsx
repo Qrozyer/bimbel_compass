@@ -4,24 +4,34 @@ import axios from 'axios';
 import { toast } from 'react-toastify';
 import { useNavigate } from 'react-router-dom';
 import { useDispatch } from 'react-redux';
+
 const baseURL = process.env.REACT_APP_BASE_URL;
 const USER = process.env.REACT_APP_USER;
 const PASS = process.env.REACT_APP_PASS;
 const USER_VALUE = process.env.REACT_APP_USER_VALUE;
 const PASS_VALUE = process.env.REACT_APP_PASS_VALUE;
 
-
 function Login() {
   const [username, setUsername] = useState('');
   const [password, setPassword] = useState('');
   const [token, setToken] = useState('');
+  const [rememberMe, setRememberMe] = useState(false);
+
   const navigate = useNavigate();
   const dispatch = useDispatch();
 
+  // Jika ada token tersimpan di localStorage, langsung arahkan ke halaman utama
+  useEffect(() => {
+    const savedToken = localStorage.getItem('token');
+    if (savedToken) {
+      navigate('/');
+    }
+  }, [navigate]);
+
+  // Ambil token dari server
   useEffect(() => {
     const fetchToken = async () => {
       try {
-        // Mengirim request GET untuk mengambil token
         const res = await axios.get(`${baseURL}/token`, {
           headers: {
             'Content-Type': 'application/json',
@@ -29,37 +39,41 @@ function Login() {
             [PASS]: PASS_VALUE,
           },
         });
-
-        //Menyimpan token yang diterima dari response API 
         setToken(res.data.token);
       } catch (error) {
-        //menangani error jika token tidak berhasil diambil
         console.error('Error:', error);
         toast.error('Gagal mengambil token');
       }
     };
 
-    //memanggil fungsi fetchToken saat komponen pertama kali dimuat
     fetchToken();
   }, []);
 
   const handleLogin = async (e) => {
     e.preventDefault();
     try {
-      const res = await axios.post(`${baseURL}/login/admin`, {
-        username : username,
-        password : password,
-      },
-      {
-        headers: {
-          Authorization: token, // Menggunakan token yang diambil sebelumnya
+      const res = await axios.post(
+        `${baseURL}/login/admin`,
+        {
+          username: username,
+          password: password,
+        },
+        {
+          headers: {
+            Authorization: token,
+          },
         }
-      });
+      );
 
-
-      // Tampilkan pesan dari response
       toast.success(res.data.message || 'Login berhasil!');
-      sessionStorage.setItem('token', token);
+
+      // Simpan token sesuai kondisi Remember Me
+      if (rememberMe) {
+        localStorage.setItem('token', token);
+      } else {
+        sessionStorage.setItem('token', token);
+      }
+
       navigate('/');
     } catch (error) {
       const msg = error.response?.data?.message || 'Login gagal!';
@@ -110,12 +124,19 @@ function Login() {
               <div className="row">
                 <div className="col-8">
                   <div className="icheck-primary">
-                    <input type="checkbox" id="remember" />
+                    <input
+                      type="checkbox"
+                      id="remember"
+                      checked={rememberMe}
+                      onChange={(e) => setRememberMe(e.target.checked)}
+                    />
                     <label htmlFor="remember">Remember Me</label>
                   </div>
                 </div>
                 <div className="col-4">
-                  <button type="submit" className="btn btn-primary btn-block">Sign In</button>
+                  <button type="submit" className="btn btn-primary btn-block">
+                    Sign In
+                  </button>
                 </div>
               </div>
             </form>

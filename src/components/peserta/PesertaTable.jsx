@@ -1,7 +1,7 @@
 import React, { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { fetchData, deleteData } from '../../utils/api'; // Import deleteData
-import Swal from 'sweetalert2'; // Import SweetAlert2
+import { fetchData, deleteData } from '../../utils/api';
+import Swal from 'sweetalert2';
 
 const PesertaTable = () => {
   const navigate = useNavigate();
@@ -13,6 +13,9 @@ const PesertaTable = () => {
   const [selectedAsal, setSelectedAsal] = useState('');
   const [selectedPeriode, setSelectedPeriode] = useState('');
   const [searchTerm, setSearchTerm] = useState('');
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     const fetchInitialData = async () => {
@@ -34,11 +37,14 @@ const PesertaTable = () => {
     fetchInitialData();
   }, []);
 
+  useEffect(() => {
+    setCurrentPage(1);
+  }, [searchTerm, selectedAsal, selectedPeriode, itemsPerPage]);
+
   const handleEditClick = (id) => {
     navigate(`/peserta/edit/${id}`);
   };
 
-  // Handle delete with SweetAlert
   const handleDelete = async (id) => {
     Swal.fire({
       title: 'Apakah Anda yakin?',
@@ -50,9 +56,7 @@ const PesertaTable = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         try {
-          // Menghapus peserta berdasarkan ID
           await deleteData('peserta', id);
-          // Mengupdate daftar peserta setelah penghapusan
           setPeserta((prevPeserta) => prevPeserta.filter((item) => item.peserta_id !== id));
           Swal.fire('Terhapus!', 'Peserta telah dihapus.', 'success');
         } catch (error) {
@@ -63,12 +67,17 @@ const PesertaTable = () => {
     });
   };
 
-  const filteredData = peserta
-    .filter((p) =>
+  const filteredData = peserta.filter(
+    (p) =>
       (!selectedAsal || p.peserta_asalsekolah === selectedAsal) &&
       (!selectedPeriode || p.peserta_periode === selectedPeriode) &&
       p.peserta_nama.toLowerCase().includes(searchTerm.toLowerCase())
-    );
+  );
+
+  const totalPages = Math.ceil(filteredData.length / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
 
   return (
     <div className="card shadow-sm rounded-4">
@@ -130,10 +139,10 @@ const PesertaTable = () => {
               </tr>
             </thead>
             <tbody>
-              {filteredData.length > 0 ? (
-                filteredData.map((item, index) => (
+              {currentItems.length > 0 ? (
+                currentItems.map((item, index) => (
                   <tr key={item.peserta_id}>
-                    <td>{index + 1}</td>
+                    <td>{indexOfFirstItem + index + 1}</td>
                     <td>{item.peserta_nama}</td>
                     <td>{item.peserta_email}</td>
                     <td>{item.peserta_jk}</td>
@@ -161,6 +170,55 @@ const PesertaTable = () => {
               )}
             </tbody>
           </table>
+        </div>
+
+        {/* Pagination Controls */}
+        <div className="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
+          <div>
+            Tampilkan{' '}
+            <select
+              className="form-select d-inline-block w-auto"
+              value={itemsPerPage}
+              onChange={(e) => setItemsPerPage(Number(e.target.value))}
+            >
+              {[10, 15, 20, 25, 30].map((n) => (
+                <option key={n} value={n}>
+                  {n}
+                </option>
+              ))}
+            </select>{' '}
+            baris per halaman
+          </div>
+
+          <nav>
+            <ul className="pagination mb-0">
+              <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => setCurrentPage(1)}>
+                  &laquo;
+                </button>
+              </li>
+              <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}>
+                  &lsaquo;
+                </button>
+              </li>
+              <li className="page-item disabled">
+                <span className="page-link">
+                  Halaman {currentPage} dari {totalPages}
+                </span>
+              </li>
+              <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}>
+                  &rsaquo;
+                </button>
+              </li>
+              <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                <button className="page-link" onClick={() => setCurrentPage(totalPages)}>
+                  &raquo;
+                </button>
+              </li>
+            </ul>
+          </nav>
         </div>
       </div>
     </div>

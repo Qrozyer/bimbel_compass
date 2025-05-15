@@ -2,7 +2,7 @@ import React from 'react';
 import PesertaTable from '../../components/peserta/PesertaTable';
 import { useNavigate } from 'react-router-dom';
 
-const AsalPeserta = () => {
+const PesertaList = () => {
   const navigate = useNavigate();
 
   const handleAddClick = () => {
@@ -21,4 +21,4 @@ const AsalPeserta = () => {
   );
 };
 
-export default AsalPeserta;
+export default PesertaList;

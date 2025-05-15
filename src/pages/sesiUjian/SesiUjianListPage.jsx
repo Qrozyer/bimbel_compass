@@ -2,6 +2,7 @@ import React, { useState, useEffect } from 'react';
 import SesiUjianTable from '../../components/sesiUjian/SesiUjianTable';
 import { fetchData, deleteData } from '../../utils/api'; // Menggunakan API untuk fetch dan delete data
 import { useNavigate } from 'react-router-dom'; // Untuk navigasi
+import Swal from 'sweetalert2'; // Untuk menampilkan alert
 
 const SesiUjianListPage = () => {
   const [sessions, setSessions] = useState([]); // State untuk menyimpan daftar sesi ujian
@@ -25,11 +26,26 @@ const SesiUjianListPage = () => {
 
   // Fungsi untuk menghapus sesi ujian
   const handleDelete = async (sectionId) => {
-    const response = await deleteData('soal/section', sectionId);
-    if (response) {
-      setSessions(sessions.filter((session) => session.SectionId !== sectionId)); // Update state setelah penghapusan
+    const result = await Swal.fire({
+      title: 'Apakah Anda yakin?',
+      text: 'Data sesi ujian akan dihapus secara permanen!',
+      icon: 'warning',
+      showCancelButton: true,
+      confirmButtonText: 'Ya, hapus!',
+      cancelButtonText: 'Batal',
+    });
+  
+    if (result.isConfirmed) {
+      const response = await deleteData('soal/section', sectionId);
+      if (response) {
+        setSessions(sessions.filter((session) => session.SectionId !== sectionId));
+        Swal.fire('Dihapus!', 'Sesi ujian berhasil dihapus.', 'success');
+      } else {
+        Swal.fire('Gagal!', 'Terjadi kesalahan saat menghapus sesi ujian.', 'error');
+      }
     }
   };
+  
 
   return (
     <div className="container">

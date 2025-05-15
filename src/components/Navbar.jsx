@@ -8,10 +8,8 @@ function Navbar() {
   // Fungsi logout
   const handleLogout = async () => {
     try {
-
-      // Menghapus token di sessionStorage
-      sessionStorage.removeItem('token');
-      
+      localStorage.removeItem('token');
+      sessionStorage.removeItem('token');      
       // Arahkan ke halaman login setelah logout
       navigate('/login');
 

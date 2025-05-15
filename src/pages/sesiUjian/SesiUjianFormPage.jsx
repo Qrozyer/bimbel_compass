@@ -1,76 +1,103 @@
+// src/pages/sesi/SesiUjianFormPage.jsx
 import React, { useState, useEffect } from 'react';
-import { fetchData, addData, editData } from '../../utils/api'; // API untuk fetch dan save data
-import { useNavigate, useParams } from 'react-router-dom'; // Menggunakan useNavigate dan useParams untuk routing
+import { useNavigate, useParams } from 'react-router-dom';
 import Swal from 'sweetalert2';
+import { fetchData, addData, editData } from '../../utils/api';
 
 const SesiUjianFormPage = () => {
-  const [sessionData, setSessionData] = useState({
-    SectionNama: '',
-    WaktuCreate: '',
-    WaktuUpdate: '',
-  }); // State untuk menyimpan data sesi ujian
-  const { id } = useParams(); // Mengambil ID sesi ujian dari URL jika mengedit
-  const navigate = useNavigate(); // Hook untuk navigasi
+  const navigate = useNavigate();
+  const { id } = useParams();
+  const isEdit = Boolean(id);
 
-  // Fetch data sesi ujian jika mengedit
+  const [form, setForm] = useState({
+    SectionNama: '',
+    SectionTampil: 1,
+  });
+
   useEffect(() => {
-    if (id) {
-      const fetchSession = async () => {
-        const data = await fetchData(`soal/section/${id}`);
-        if (data) {
-          setSessionData(data);
+    if (isEdit) {
+      const loadData = async () => {
+        try {
+          const data = await fetchData(`soal/section/pilih/${id}`);
+          if (data) setForm(data);
+        } catch (err) {
+          console.error(err);
+          Swal.fire('Error', 'Gagal memuat data sesi.', 'error');
         }
       };
-      fetchSession();
+      loadData();
     }
-  }, [id]);
+  }, [id, isEdit]);
 
-  // Handle perubahan input form
-  const handleInputChange = (e) => {
+  const handleChange = (e) => {
     const { name, value } = e.target;
-    setSessionData({ ...sessionData, [name]: value });
+    setForm((prev) => ({
+      ...prev,
+      [name]: name === 'SectionTampil' ? parseInt(value) : value,
+    }));
   };
 
-  // Menyimpan sesi ujian baru atau memperbarui sesi ujian
-  const handleSave = async () => {
-    if (!sessionData.SectionNama || !sessionData.WaktuCreate) {
-      Swal.fire('Error', 'Semua field harus diisi!', 'error');
+  const handleSubmit = async () => {
+    if (!form.SectionNama.trim()) {
+      Swal.fire('Peringatan', 'Nama sesi ujian wajib diisi!', 'warning');
       return;
     }
 
-    const apiCall = id ? editData : addData; // Gunakan editData jika ada ID, addData jika baru
-    const response = await apiCall('soal/section', id, sessionData);
-
-    if (response) {
-      Swal.fire('Berhasil Disimpan', '', 'success');
-      navigate('/sesi-ujian'); // Kembali ke halaman daftar sesi ujian
-    } else {
-      Swal.fire('Error', 'Terjadi kesalahan saat menyimpan sesi ujian', 'error');
+    try {
+      if (isEdit) {
+        await editData('soal/section', id, form);
+        Swal.fire('Berhasil', 'Data berhasil diperbarui.', 'success');
+      } else {
+        await addData('soal/section', form);
+        Swal.fire('Berhasil', 'Data berhasil ditambahkan.', 'success');
+      }
+      navigate('/sesi-ujian');
+    } catch (err) {
+      console.error(err);
+      Swal.fire('Error', 'Gagal menyimpan data.', 'error');
     }
   };
 
   return (
-    <div className="container">
-      <h1 className="mt-4">{id ? 'Edit Sesi Ujian' : 'Tambah Sesi Ujian'}</h1>
+    <div style={{ maxWidth: '600px', margin: '10px auto', paddingTop: '50px' }}>
+      <div className="card shadow-sm rounded-4">
+        <div className="card-header bg-dark text-white rounded-top-4">
+          <h5 className="mb-0">{isEdit ? 'Edit Sesi Ujian' : 'Tambah Sesi Ujian'}</h5>
+        </div>
+        <div className="card-body">
+          <div className="mb-3">
+            <label className="form-label">Nama Sesi Ujian</label>
+            <input
+              type="text"
+              name="SectionNama"
+              className="form-control"
+              value={form.SectionNama}
+              onChange={handleChange}
+            />
+          </div>
 
-      <div className="form-group">
-        <label>Nama Sesi Ujian</label>
-        <input
-          type="text"
-          name="SectionNama"
-          className="form-control"
-          value={sessionData.SectionNama}
-          onChange={handleInputChange}
-        />
-      </div>
+          <div className="mb-3">
+            <label className="form-label">Status Tampil</label>
+            <select
+              name="SectionTampil"
+              className="form-select"
+              value={form.SectionTampil}
+              onChange={handleChange}
+            >
+              <option value={1}>Aktif</option>
+              <option value={0}>Tidak Aktif</option>
+            </select>
+          </div>
 
-      <div className="form-group">
-        <button className="btn btn-primary" onClick={handleSave}>
-          Simpan
-        </button>
-        <button className="btn btn-secondary ml-2" onClick={() => navigate('/sesi-ujian')}>
-          Batal
-        </button>
+          <div className="d-flex justify-content-between mt-4">
+            <button className="btn btn-secondary" onClick={() => navigate('/sesi-ujian')}>
+              ← Kembali
+            </button>
+            <button className="btn btn-primary" onClick={handleSubmit}>
+              Simpan
+            </button>
+          </div>
+        </div>
       </div>
     </div>
   );

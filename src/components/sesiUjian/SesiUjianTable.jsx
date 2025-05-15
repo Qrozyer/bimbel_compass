@@ -35,7 +35,7 @@ const SesiUjianTable = ({ data, onEdit, onDelete }) => {
                 {item.SectionNama}
               </td>
               <td>
-                {item.Status === 1 ? (
+                {item.SectionTampil === 1 ? (
                   <span className="badge bg-success">Aktif</span>
                 ) : (
                   <span className="badge bg-danger">Tidak Aktif</span>

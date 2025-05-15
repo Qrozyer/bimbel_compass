@@ -129,6 +129,31 @@ const Dashboard = () => {
             </div>
           </div>
         </div>
+
+        <div className="col">
+  <div
+    className="card text-center h-100 menu-card"
+    onClick={() => navigateTo('/asal-peserta')}
+  >
+    <div className="card-body">
+      <i className="fas fa-school fa-3x mb-3"></i>
+      <h5 className="card-title">Asal Peserta</h5>
+    </div>
+  </div>
+</div>
+
+{/* Card Menu: Periode Peserta */}
+<div className="col">
+  <div
+    className="card text-center h-100 menu-card"
+    onClick={() => navigateTo('/periode')}
+  >
+    <div className="card-body">
+      <i className="fas fa-calendar-alt fa-3x mb-3"></i>
+      <h5 className="card-title">Periode Peserta</h5>
+    </div>
+  </div>
+</div>
       </div>
 
       {/* Menambahkan tag <style> untuk CSS */}
