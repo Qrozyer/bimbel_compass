@@ -82,7 +82,7 @@ const Dashboard = () => {
         <div className="col">
           <div
             className="card text-center h-100 menu-card"
-            onClick={() => navigateTo('/bidang')}
+            onClick={() => navigateTo('/buat-soal')}
           >
             <div className="card-body">
               <i className="fas fa-pen fa-3x mb-3"></i>
@@ -121,11 +121,11 @@ const Dashboard = () => {
         <div className="col">
           <div
             className="card text-center h-100 menu-card"
-            onClick={() => navigateTo('/bidang-peserta/add')}
+            onClick={() => navigateTo('/peserta-bidang')}
           >
             <div className="card-body">
+              <h5 className="card-title">Tentukan Bidang Peserta</h5>
               <i className="fas fa-user-plus fa-3x mb-3"></i>
-              <h5 className="card-title">Masukkan Peserta</h5>
             </div>
           </div>
         </div>

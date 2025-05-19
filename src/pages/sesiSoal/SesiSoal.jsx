@@ -1,37 +1,52 @@
+// SesiSoal.jsx
 import React, { useState, useEffect } from 'react';
-import { useParams, useNavigate } from 'react-router-dom'; // useParams untuk mengambil SectionId dari URL
-import { fetchData } from '../../utils/api'; // Import fetchData untuk mengambil data soal
-import SoalTable from '../../components/soal/SoalTable'; // Komponen tabel untuk menampilkan soal
-import Swal from 'sweetalert2'; // Import SweetAlert untuk konfirmasi penghapusan
+import { useParams, useNavigate } from 'react-router-dom';
+import { fetchData, editData } from '../../utils/api';
+import Swal from 'sweetalert2';
+import { toast, ToastContainer } from 'react-toastify';
+import 'react-toastify/dist/ReactToastify.css';
 
 const SesiSoal = () => {
-  const { sectionId } = useParams(); // Ambil SectionId dari URL parameter
-  const navigate = useNavigate(); // Untuk navigasi ke halaman buat soal
-  const [soalList, setSoalList] = useState([]); // Daftar soal yang akan ditampilkan
+  const { sectionId } = useParams();
+  const navigate = useNavigate();
+  const [soalList, setSoalList] = useState([]);
+  const [sectionName, setSectionName] = useState('');
+  const [editingPointId, setEditingPointId] = useState(null);
+  const [editedPoint, setEditedPoint] = useState('');
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
     const fetchSoal = async () => {
       try {
-        const data = await fetchData(`soal/list/${sectionId}`); // Ambil data soal berdasarkan SectionId
-        setSoalList(data); // Set soal yang diterima ke state soalList
+        const data = await fetchData(`soal/list/${sectionId}`);
+        setSoalList(data);
       } catch (error) {
         console.error('Error fetching soal list:', error);
       }
     };
+    fetchSoal();
+  }, [sectionId]);
 
-    fetchSoal(); // Panggil fungsi untuk mengambil soal berdasarkan SectionId
-  }, [sectionId]); // Akan dipanggil setiap kali sectionId berubah
+  useEffect(() => {
+    const fetchSection = async () => {
+      try {
+        const data = await fetchData(`soal/section/pilih/${sectionId}`);
+        setSectionName(data.SectionNama);
+      } catch (error) {
+        console.error('Error fetching section:', error);
+      }
+    };
+    fetchSection();
+  }, [sectionId]);
 
   const handleAddSoal = () => {
-    // Navigasi ke halaman buat soal untuk SectionId tertentu
     navigate(`/soal-list/${sectionId}`);
   };
 
   const handleDelete = async (Id) => {
-    // Menampilkan konfirmasi penghapusan
     const result = await Swal.fire({
       title: 'Yakin ingin menghapus soal ini?',
-      text: "Data soal yang dihapus tidak dapat dikembalikan.",
       icon: 'warning',
       showCancelButton: true,
       confirmButtonText: 'Hapus',
@@ -40,60 +55,163 @@ const SesiSoal = () => {
 
     if (result.isConfirmed) {
       try {
-        // Menghapus soal dari API
-        await fetchData(`soal/list/${Id}`, 'DELETE'); // Endpoint DELETE untuk menghapus soal
-        // Setelah berhasil menghapus, perbarui daftar soal
-        setSoalList(prevSoalList => prevSoalList.filter(soal => soal.Id !== Id));
-        Swal.fire('Soal dihapus!', 'Soal telah berhasil dihapus.', 'success');
+        await fetchData(`soal/list/${Id}`, 'DELETE');
+        setSoalList(prev => prev.filter(soal => soal.Id !== Id));
+        toast.success('Soal berhasil dihapus');
       } catch (error) {
         console.error('Error deleting soal:', error);
-        Swal.fire('Gagal menghapus soal', 'Terjadi kesalahan saat menghapus soal.', 'error');
+        toast.error('Gagal menghapus soal');
       }
     }
   };
 
+  const handleEditPoint = (soal) => {
+    setEditingPointId(soal.Id);
+    setEditedPoint(soal.Point);
+  };
+
+  const handleCancelEdit = () => {
+    setEditingPointId(null);
+    setEditedPoint('');
+  };
+
+  const handleSavePoint = async (soal) => {
+    try {
+      await editData(`soal/list`, soal.Id, {Point: parseInt(editedPoint) });
+      setSoalList(prev =>
+        prev.map(s => (s.Id === soal.Id ? { ...s, Point: parseInt(editedPoint) } : s))
+      );
+      toast.success('Point berhasil diperbarui');
+      setEditingPointId(null);
+      setEditedPoint('');
+    } catch (error) {
+      console.error('Gagal update point:', error);
+      toast.error('Gagal memperbarui point');
+    }
+  };
+
+  // Pagination
+  const totalItems = soalList.length;
+  const totalPages = Math.ceil(totalItems / itemsPerPage);
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = soalList.slice(indexOfFirstItem, indexOfLastItem);
+
   return (
-    <div className='container p-4'>
-      <h3 className='mb-3'>Soal untuk Sesi {sectionId}</h3>
+    <div className="container" style={{ margin: '0 auto', paddingTop: '80px', maxWidth: '1000px' }}>
+      <ToastContainer />
+      <div className="d-flex justify-content-start mb-3 gap-2">
+        <button className="btn btn-secondary" onClick={() => navigate(-1)}>
+          <i className="fas fa-arrow-left"></i> Kembali
+        </button>
+        <button className="btn btn-success" onClick={handleAddSoal}>
+          <i className="fas fa-plus"></i> Masukkan Soal
+        </button>
+      </div>
 
-      {/* Tombol untuk menambah soal */}
-      <button 
-        className="btn btn-primary mb-2 ml-3" 
-        onClick={handleAddSoal}
-      >
-        Masukkan Soal
-      </button>
+      <div className="card rounded-4 shadow-sm">
+        <div className="card-header bg-dark text-white rounded-top-4">
+          <h5 className="mb-0">Daftar Soal - Sesi {sectionName}</h5>
+        </div>
+        <div className="card-body table-responsive">
+          <table className="table table-bordered table-hover">
+            <thead className="table-secondary">
+              <tr>
+                <th>No</th>
+                <th>Pertanyaan</th>
+                <th>A</th><th>B</th><th>C</th><th>D</th><th>E</th>
+                <th>Point</th>
+                <th>Aksi</th>
+              </tr>
+            </thead>
+            <tbody>
+              {currentItems.length > 0 ? (
+                currentItems.map((soal, index) => (
+                  <tr key={soal.SoalId}>
+                    <td>{indexOfFirstItem + index + 1}</td>
+                    <td dangerouslySetInnerHTML={{ __html: soal.Pertanyaan }} />
+<td dangerouslySetInnerHTML={{ __html: soal.JawabA }} />
+<td dangerouslySetInnerHTML={{ __html: soal.JawabB }} />
+<td dangerouslySetInnerHTML={{ __html: soal.JawabC }} />
+<td dangerouslySetInnerHTML={{ __html: soal.JawabD }} />
+<td dangerouslySetInnerHTML={{ __html: soal.JawabE }} />
 
-      <div style={{padding: '15px', maxWidth: '100%' }}>
-      <table className="table table-bordered table-striped">
-        <thead className="table-dark">
-          <tr>
-            <th>No</th>
-            <th>Pertanyaan</th>
-            <th>Jawaban A</th>
-            <th>Jawaban B</th>
-            <th>Jawaban C</th>
-            <th>Jawaban D</th>
-            <th>Jawaban E</th>
-            <th>Point</th>
-          </tr>
-        </thead>
-        <tbody>
-          {soalList.map((soal, index) => (
-            <tr key={soal.SoalId}>
-              <td>{index + 1}</td>
-              <td>{soal.Pertanyaan}</td>
-              <td>{soal.JawabA}</td>
-              <td>{soal.JawabB}</td>
-              <td>{soal.JawabC}</td>
-              <td>{soal.JawabD}</td>
-              <td>{soal.JawabE}</td>
-              <td>{soal.Point}</td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-    </div>
+                    <td>
+                      {editingPointId === soal.Id ? (
+                        <div className="d-flex align-items-center gap-1">
+                          <input
+                            type="number"
+                            value={editedPoint}
+                            onChange={(e) => setEditedPoint(e.target.value)}
+                            className="form-control form-control-sm"
+                            style={{ width: '70px' }}
+                          />
+                          <button className="btn btn-sm btn-success" onClick={() => handleSavePoint(soal)}>
+                            <i className="fas fa-check"></i>
+                          </button>
+                          <button className="btn btn-sm btn-danger" onClick={handleCancelEdit}>
+                            <i className="fas fa-times"></i>
+                          </button>
+                        </div>
+                      ) : (
+                        <div className="d-flex justify-content-between align-items-center">
+                          <span>{soal.Point}</span>
+                          <button className="btn btn-sm btn-outline-primary ms-2" onClick={() => handleEditPoint(soal)}>
+                            <i className="fas fa-pen"></i>
+                          </button>
+                        </div>
+                      )}
+                    </td>
+                    <td>
+                      <button className="btn btn-danger btn-sm" onClick={() => handleDelete(soal.Id)}>
+                        <i className="fas fa-trash-alt"></i>
+                      </button>
+                    </td>
+                  </tr>
+                ))
+              ) : (
+                <tr><td colSpan="9" className="text-center">Tidak ada soal.</td></tr>
+              )}
+            </tbody>
+          </table>
+        </div>
+
+        {/* Pagination */}
+        <div className="card-footer">
+          <div className="d-flex justify-content-between align-items-center">
+            <div>
+              Tampilkan{' '}
+              <select
+                className="form-select d-inline-block w-auto"
+                value={itemsPerPage}
+                onChange={(e) => setItemsPerPage(Number(e.target.value))}
+              >
+                {[5, 10, 15, 20].map(n => <option key={n} value={n}>{n}</option>)}
+              </select>{' '}
+              baris
+            </div>
+            <nav>
+              <ul className="pagination mb-0">
+                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                  <button className="page-link" onClick={() => setCurrentPage(1)}>&laquo;</button>
+                </li>
+                <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                  <button className="page-link" onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}>&lsaquo;</button>
+                </li>
+                <li className="page-item disabled">
+                  <span className="page-link">Halaman {currentPage} dari {totalPages}</span>
+                </li>
+                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                  <button className="page-link" onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}>&rsaquo;</button>
+                </li>
+                <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                  <button className="page-link" onClick={() => setCurrentPage(totalPages)}>&raquo;</button>
+                </li>
+              </ul>
+            </nav>
+          </div>
+        </div>
+      </div>
     </div>
   );
 };

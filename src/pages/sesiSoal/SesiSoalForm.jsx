@@ -1,192 +1,330 @@
 import React, { useState, useEffect } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setPeserta } from '../../actions/pesertaActions';
+import { setSoal } from '../../actions/soalActions';
+import { useParams, useNavigate } from 'react-router-dom';
 import { fetchData, addData } from '../../utils/api';
-import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
+import { toast } from 'react-toastify';
 
 const SesiSoalForm = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
+  const { sectionId } = useParams();
 
+  const [sectionName, setSectionName] = useState('');
+
+  const [bidangList, setBidangList] = useState([]);
+  const [subBidangList, setSubBidangList] = useState([]);
   const [materiList, setMateriList] = useState([]);
-  const [soalList, setSoalList] = useState([]);
+  const soalList = useSelector((state) => state.soal.soal);
   const [filteredSoal, setFilteredSoal] = useState([]);
+  const [usedSoalIds, setUsedSoalIds] = useState([]);
+
+  const [selectedBidang, setSelectedBidang] = useState('');
+  const [selectedSubBidang, setSelectedSubBidang] = useState('');
   const [selectedMateri, setSelectedMateri] = useState('');
   const [selectedSoal, setSelectedSoal] = useState([]);
-  const peserta = useSelector((state) => state.peserta.peserta);
+
+  const [currentPage, setCurrentPage] = useState(1);
+  const [itemsPerPage, setItemsPerPage] = useState(10);
 
   useEffect(() => {
-    const fetchMateriAndSoal = async () => {
+    const fetchInitialData = async () => {
       try {
-        const materiData = await fetchData('materi');
-        const soalData = await fetchData('soal');
-
-        console.log("Materi Data:", materiData);
-        console.log("Soal Data:", soalData);
-
-        setMateriList(materiData);
-        setSoalList(soalData);
-        setFilteredSoal(soalData); // Saat awal, tampilkan semua soal
+        const [soalData, bidangData, subBidangData, materiData] = await Promise.all([
+          fetchData('soal'),
+          fetchData('bidang'),
+          fetchData('sub-bidang'),
+          fetchData('materi'),
+        ]);
+        if (soalData) dispatch(setSoal(soalData));
+        if (bidangData) setBidangList(bidangData);
+        if (subBidangData) setSubBidangList(subBidangData);
+        if (materiData) setMateriList(materiData);
       } catch (error) {
         console.error('Error fetching data:', error);
       }
     };
+    fetchInitialData();
+  }, [dispatch]);
 
-    fetchMateriAndSoal();
-  }, []); // hanya dijalankan sekali di awal
+  useEffect(() => {
+    const fetchSection = async () => {
+      try {
+        const data = await fetchData(`soal/section/pilih/${sectionId}`);
+        setSectionName(data.SectionNama);
+      } catch (error) {
+        console.error('Error fetching section name:', error);
+      }
+    };
+    fetchSection();
+  }, [sectionId]);
 
-  const handleMateriChange = (event) => {
-    const materiId = event.target.value;
-    setSelectedMateri(materiId);
+  useEffect(() => {
+    const fetchUsedSoal = async () => {
+      try {
+        const data = await fetchData(`soal/list/${sectionId}`);
+        if (data && Array.isArray(data)) {
+          const ids = data.map((item) => item.SoalId);
+          setUsedSoalIds(ids);
+        }
+      } catch (error) {
+        console.error('Error fetching used soal:', error);
+      }
+    };
+    fetchUsedSoal();
+  }, [sectionId]);
 
-    if (materiId === '') {
-      setFilteredSoal(soalList);
-    } else {
-      const filtered = soalList.filter((soal) => soal.MateriId === materiId);
+  useEffect(() => {
+    if (selectedBidang && selectedSubBidang && selectedMateri) {
+      const filtered = soalList
+        .filter((soal) => soal.MateriId === parseInt(selectedMateri))
+        .filter((soal) => !usedSoalIds.includes(soal.SoalId));
       setFilteredSoal(filtered);
+      setCurrentPage(1);
+    } else {
+      setFilteredSoal([]);
     }
-  };
+  }, [selectedBidang, selectedSubBidang, selectedMateri, soalList, usedSoalIds]);
+
+  const filteredSubBidang = subBidangList.filter(
+    (sb) => sb.BidangId === parseInt(selectedBidang)
+  );
+  const filteredMateri = materiList.filter(
+    (m) => m.SubId === parseInt(selectedSubBidang)
+  );
+
+  const indexOfLastItem = currentPage * itemsPerPage;
+  const indexOfFirstItem = indexOfLastItem - itemsPerPage;
+  const currentItems = filteredSoal.slice(indexOfFirstItem, indexOfLastItem);
+  const totalPages = Math.ceil(filteredSoal.length / itemsPerPage);
 
   const handleCheckboxChange = (soalId, isChecked) => {
-    setSelectedSoal((prevState) => {
-      if (isChecked) {
-        return [...prevState, { SoalId: soalId, Point: 1 }];
-      } else {
-        return prevState.filter((soal) => soal.SoalId !== soalId);
-      }
-    });
+    setSelectedSoal((prev) =>
+      isChecked
+        ? [...prev, { SoalId: soalId, Point: 1 }]
+        : prev.filter((s) => s.SoalId !== soalId)
+    );
   };
 
   const handlePointChange = (soalId, point) => {
-    setSelectedSoal((prevState) =>
-      prevState.map((soal) =>
-        soal.SoalId === soalId ? { ...soal, Point: point } : soal
-      )
+    setSelectedSoal((prev) =>
+      prev.map((s) => (s.SoalId === soalId ? { ...s, Point: point } : s))
     );
   };
 
   const handleSubmit = async () => {
     try {
       const requests = selectedSoal.map((soal) => ({
-        SectionId: 1, // ganti sesuai kebutuhan
+        SectionId: Number(sectionId),
         SoalId: soal.SoalId,
         Point: soal.Point,
       }));
 
-      for (const request of requests) {
-        await addData('soal/list', request);
+      for (const req of requests) {
+        await addData('soal/list', req);
       }
 
-      alert('Data berhasil disubmit');
-      navigate(-1); // <-- kembali ke halaman sebelumnya
+      Swal.fire({
+        icon: 'success',
+        title: 'Berhasil',
+        text: 'Data berhasil disimpan!',
+        confirmButtonColor: '#3085d6',
+      }).then(() => navigate(-1));
     } catch (error) {
-      console.error('Error submitting data:', error);
-      alert('Gagal submit data');
+      console.error('Submit error:', error);
+      toast.error('Gagal menyimpan data. Silakan coba lagi.', {
+        position: 'top-right',
+        autoClose: 3000,
+      });
     }
   };
 
   return (
-    <div style={{ margin: '20px auto', padding: '20px', maxWidth: '1200px' }}>
-      <div className="d-flex justify-content-between mb-3">
-        <div>
-          <select
-            className="form-select"
-            onChange={handleMateriChange}
-            value={selectedMateri}
-          >
-            <option value="">Pilih Materi</option>
-            {materiList.map((materi) => (
-              <option key={materi.MateriId} value={materi.MateriId}>
-                {materi.MateriJudul}
-              </option>
-            ))}
-          </select>
-        </div>
-        <div>
-          <button className="btn btn-success" onClick={() => navigate('/soal/add')}>
-            Tambah Soal
-          </button>
-        </div>
+    <div className="container" style={{ maxWidth: '1200px', padding: '20px' }}>
+      <div className="d-flex justify-content-start mb-3">
+        <button className="btn btn-secondary me-2" onClick={() => navigate(-1)}>
+          <i className="fas fa-arrow-left"></i> Kembali
+        </button>
+        <button className="btn btn-success" onClick={() => navigate('/buat-soal')}>
+          Buat Soal Baru
+        </button>
       </div>
 
-      {filteredSoal.length === 0 ? (
-        <div>Soal tidak ditemukan</div>
-      ) : (
-        <table className="table table-striped table-bordered">
-          <thead className="table-dark">
-            <tr>
-              <th>No</th>
-              <th>Pertanyaan</th>
-              <th>Jawaban A</th>
-              <th>Jawaban B</th>
-              <th>Jawaban C</th>
-              <th>Jawaban D</th>
-              <th>Jawaban E</th>
-              <th style={{ width: '100px' }}>Kunci Jawaban</th>
-              <th style={{ width: '50px' }}>Aksi</th>
-              <th style={{ width: '50px' }}>Poin</th>
-            </tr>
-          </thead>
-          <tbody>
-            {filteredSoal.map((soal, index) => (
-              <tr key={soal.SoalId}>
-                <td>{index + 1}</td>
-                <td dangerouslySetInnerHTML={{ __html: soal.SoalPertanyaan }}></td>
-                <td dangerouslySetInnerHTML={{ __html: soal.SoalA }}></td>
-                <td dangerouslySetInnerHTML={{ __html: soal.SoalB }}></td>
-                <td dangerouslySetInnerHTML={{ __html: soal.SoalC }}></td>
-                <td dangerouslySetInnerHTML={{ __html: soal.SoalD }}></td>
-                <td dangerouslySetInnerHTML={{ __html: soal.SoalE }}></td>
-                <td dangerouslySetInnerHTML={{ __html: soal.SoalJawaban }}></td>
-                <td>
-                  <input
-                    type="checkbox"
-                    onChange={(e) =>
-                      handleCheckboxChange(soal.SoalId, e.target.checked)
-                    }
-                  />
-                </td>
-                <td style={{ width: '50px' }}>
-  <input
-    disabled={!selectedSoal.find((s) => s.SoalId === soal.SoalId)}
-    type="number"
-    min="0"
-    value={
-      selectedSoal.find((s) => s.SoalId === soal.SoalId)?.Point || 0
-    }
-    onChange={(e) => {
-      const value = e.target.value;
-      if (!isNaN(value) || value === "") {
-        const numericValue = value ? parseInt(value) : 0;
+      <div className="card shadow-sm rounded-4">
+        <div className="card-header bg-dark text-white rounded-top-4">
+          <h5 className="mb-0">Memasukkan Soal ke Sesi {sectionName}</h5>
+        </div>
+        <div className="card-body">
+          {/* Filter */}
+          <div className="row g-3 mb-3">
+            <div className="col-md-4">
+              <label className="form-label">Bidang</label>
+              <select
+                className="form-select"
+                value={selectedBidang}
+                onChange={(e) => {
+                  setSelectedBidang(e.target.value);
+                  setSelectedSubBidang('');
+                  setSelectedMateri('');
+                }}
+              >
+                <option value="">Pilih Bidang</option>
+                {bidangList.map((b) => (
+                  <option key={b.BidangId} value={b.BidangId}>{b.BidangNama}</option>
+                ))}
+              </select>
+            </div>
+            <div className="col-md-4">
+              <label className="form-label">Sub Bidang</label>
+              <select
+                className="form-select"
+                value={selectedSubBidang}
+                onChange={(e) => {
+                  setSelectedSubBidang(e.target.value);
+                  setSelectedMateri('');
+                }}
+                disabled={!selectedBidang}
+              >
+                <option value="">Pilih Sub Bidang</option>
+                {filteredSubBidang.map((sb) => (
+                  <option key={sb.SubId} value={sb.SubId}>{sb.SubNama}</option>
+                ))}
+              </select>
+            </div>
+            <div className="col-md-4">
+              <label className="form-label">Materi</label>
+              <select
+                className="form-select"
+                value={selectedMateri}
+                onChange={(e) => setSelectedMateri(e.target.value)}
+                disabled={!selectedSubBidang}
+              >
+                <option value="">Pilih Materi</option>
+                {filteredMateri.map((m) => (
+                  <option key={m.MateriId} value={m.MateriId}>{m.MateriJudul}</option>
+                ))}
+              </select>
+            </div>
+          </div>
 
-        // Cek dulu, kalau soal belum dipilih (checkbox belum dicentang), langsung tambahkan.
-        const existing = selectedSoal.find((s) => s.SoalId === soal.SoalId);
-        if (existing) {
-          handlePointChange(soal.SoalId, numericValue);
-        } else {
-          setSelectedSoal((prevState) => [
-            ...prevState,
-            { SoalId: soal.SoalId, Point: numericValue },
-          ]);
-        }
-      }
-    }}
-  />
-</td>
+          {/* Alert jika filter belum lengkap */}
+          {(!selectedBidang || !selectedSubBidang || !selectedMateri) && (
+            <div className="alert alert-info">
+              Silakan pilih <strong>Bidang</strong>, <strong>Sub Bidang</strong>, dan <strong>Materi</strong> untuk menampilkan soal.
+            </div>
+          )}
 
-              </tr>
-            ))}
-          </tbody>
-        </table>
-      )}
+          {/* Tabel Soal */}
+          {selectedBidang && selectedSubBidang && selectedMateri && (
+            filteredSoal.length === 0 ? (
+              <div className="alert alert-warning">Soal tidak ditemukan atau sudah dimasukkan sebelumnya.</div>
+            ) : (
+              <>
+                <div className="table-responsive">
+                  <table className="table table-bordered table-hover">
+                    <thead className="table-secondary">
+                      <tr>
+                        <th>No</th>
+                        <th>Pertanyaan</th>
+                        <th>A</th>
+                        <th>B</th>
+                        <th>C</th>
+                        <th>D</th>
+                        <th>E</th>
+                        <th>Kunci</th>
+                        <th>Pilih</th>
+                        <th>Poin</th>
+                      </tr>
+                    </thead>
+                    <tbody>
+                      {currentItems.map((soal, index) => (
+                        <tr key={soal.SoalId}>
+                          <td>{indexOfFirstItem + index + 1}</td>
+                          <td dangerouslySetInnerHTML={{ __html: soal.SoalPertanyaan }} />
+                          <td dangerouslySetInnerHTML={{ __html: soal.SoalA }} />
+                          <td dangerouslySetInnerHTML={{ __html: soal.SoalB }} />
+                          <td dangerouslySetInnerHTML={{ __html: soal.SoalC }} />
+                          <td dangerouslySetInnerHTML={{ __html: soal.SoalD }} />
+                          <td dangerouslySetInnerHTML={{ __html: soal.SoalE }} />
+                          <td>{soal.SoalJawaban}</td>
+                          <td>
+                            <input
+                              type="checkbox"
+                              checked={selectedSoal.some((s) => s.SoalId === soal.SoalId)}
+                              onChange={(e) => handleCheckboxChange(soal.SoalId, e.target.checked)}
+                            />
+                          </td>
+                          <td>
+                            <input
+                              type="number"
+                              min="0"
+                              max="10"
+                              value={
+                                selectedSoal.find((s) => s.SoalId === soal.SoalId)?.Point || 0
+                              }
+                              disabled={!selectedSoal.some((s) => s.SoalId === soal.SoalId)}
+                              onChange={(e) =>
+                                handlePointChange(soal.SoalId, Number(e.target.value))
+                              }
+                              style={{ width: '60px' }}
+                            />
+                          </td>
+                        </tr>
+                      ))}
+                    </tbody>
+                  </table>
+                </div>
 
-      <div className="d-flex justify-content-end gap-2">
-        <button className="btn btn-secondary" onClick={() => navigate(-1)}>
-          Kembali
-        </button>
-        <button className="btn btn-primary" onClick={handleSubmit}>
-          Submit
-        </button>
+                {/* Pagination */}
+                <div className="d-flex justify-content-between align-items-center mt-3">
+                  <div>
+                    Tampilkan{' '}
+                    <select
+                      className="form-select d-inline-block w-auto"
+                      value={itemsPerPage}
+                      onChange={(e) => setItemsPerPage(Number(e.target.value))}
+                    >
+                      {[5, 10, 15, 20].map((n) => (
+                        <option key={n} value={n}>{n}</option>
+                      ))}
+                    </select>{' '}
+                    baris per halaman
+                  </div>
+                  <nav>
+                    <ul className="pagination mb-0">
+                      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => setCurrentPage(1)}>&laquo;</button>
+                      </li>
+                      <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}>&lsaquo;</button>
+                      </li>
+                      <li className="page-item disabled">
+                        <span className="page-link">Halaman {currentPage} dari {totalPages}</span>
+                      </li>
+                      <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}>&rsaquo;</button>
+                      </li>
+                      <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
+                        <button className="page-link" onClick={() => setCurrentPage(totalPages)}>&raquo;</button>
+                      </li>
+                    </ul>
+                  </nav>
+                </div>
+
+                <div className="mt-3 text-end">
+                  <button
+                    className="btn btn-primary"
+                    onClick={handleSubmit}
+                    disabled={selectedSoal.length === 0}
+                  >
+                    Simpan Soal Terpilih
+                  </button>
+                </div>
+              </>
+            )
+          )}
+        </div>
       </div>
     </div>
   );

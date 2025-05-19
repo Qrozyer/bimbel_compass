@@ -5,15 +5,19 @@ import Swal from 'sweetalert2';
 import { fetchData } from '../../utils/api';
 import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
 
-const MateriForm = ({ initialData, onSave, onCancel }) => {
+const MateriForm = ({ initialData, subIdParam, onSave, onCancel }) => {
   const [MateriJudul, setMateriJudul] = useState(String(initialData?.MateriJudul || ''));
   const [editorData, setEditorData] = useState(String(initialData?.MateriIsi || ''));
   const [videoUrl, setVideoUrl] = useState(initialData?.MateriVideo || '');
   const [subBidangList, setSubBidangList] = useState([]);
-  const [selectedSubBidang, setSelectedSubBidang] = useState(initialData?.SubId || '');
+  const [selectedSubBidang, setSelectedSubBidang] = useState(
+    String(subIdParam || initialData?.SubId || '')
+  );
+
   const editorRef = useRef(null);
 
   useEffect(() => {
+    setSelectedSubBidang(String(subIdParam || initialData?.SubId || ''));
     setMateriJudul(String(initialData?.MateriJudul || ''));
     setEditorData(String(initialData?.MateriIsi || ''));
     setVideoUrl(initialData?.MateriVideo || '');

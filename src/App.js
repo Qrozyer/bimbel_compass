@@ -14,7 +14,7 @@ import Register from './pages/Register';
 
 import BidangListPage from './pages/bidang/BidangListPage';
 import BidangFormPage from './pages/bidang/BidangFormPage';
-import BidangPage from './pages/bidang/BidangPage';
+// import BidangPage from './pages/bidang/BidangPage';
 
 import SubBidangPage from './pages/subBidang/SubBidangPage';
 import SubBidangListPage from './pages/subBidang/SubBidangListPage';
@@ -26,7 +26,7 @@ import MateriPage from './pages/materi/MateriPage';
 
 import SoalListPage from './pages/soal/SoalListPage';
 import SoalFormPage from './pages/soal/SoalFormPage';
-import SoalPage from './pages/soal/SoalPage';
+import BuatSoal from './pages/soal/BuatSoal';
 
 import PesertaListPage from './pages/peserta/PesertaListPage';
 import PesertaFormPage from './pages/peserta/PesertaFormPage';
@@ -79,7 +79,7 @@ function App() {
           <Route path="/" element={<Layout />}>
             <Route index element={<Home />} />
             <Route path="/dashboard" element={<Dashboard />} />
-            <Route path="/bidang" element={<BidangPage />} /> {/* Rute untuk bidang */}
+            {/* <Route path="/bidang" element={<BidangPage />} /> Rute untuk bidang */}
             <Route path="/bidang-list" element={<BidangListPage />} />      
             <Route path="/bidang/add" element={<BidangFormPage />} />
             <Route path="/bidang/edit/:id" element={<BidangFormPage />} />
@@ -91,6 +91,7 @@ function App() {
 
             <Route path="/materi" element={<MateriListPage />} />
             <Route path="/materi/add" element={<MateriFormPage />} />
+            <Route path="/materi/add/:SubId" element={<MateriFormPage />} />
             <Route path="/materi/edit/:id" element={<MateriFormPage />} /> 
             <Route path="/materi/by-sub-bidang/:subId" element={<MateriBySubBidang />} /> {/* Rute untuk materi berdasarkan SubId */}
             <Route path="/materi/detail/:materiId" element={<MateriDetail />} /> {/* Rute untuk detail materi */}
@@ -107,7 +108,7 @@ function App() {
             
             <Route path="/sub-bidang/:id" element={<SubBidangPage />} /> {/* Rute untuk sub bidang */}         
             <Route path="/materi/:id" element={<MateriPage />} /> {/* Rute untuk materi berdasarkan SubId */}       
-            <Route path="/soal/:id" element={<SoalPage />} /> {/* Rute untuk soal berdasarkan MateriId */}       
+            <Route path="/buat-soal" element={<BuatSoal />} /> {/* Rute untuk soal berdasarkan MateriId */}       
 
             <Route path="/sesi-ujian" element={<SesiUjianListPage />} /> {/* Halaman Daftar Sesi Ujian */}
             <Route path="/sesi-ujian/form/:id" element={<SesiUjianFormPage />} /> {/* Halaman Formulir Edit Sesi Ujian */}
@@ -123,8 +124,8 @@ function App() {
             <Route path="/peserta/section/:sectionId" element={<SesiujianPeserta />} /> {/* Rute untuk sesi peserta ujian */}
 
             <Route path="/bidang-peserta/add" element={<BidangPeserta />} /> {/* Rute untuk bidang peserta */}
-            <Route path="/peserta-bidang/:BidangId" element={<PesertaBidang />} /> {/* Rute untuk bidang peserta */}
-            <Route path="/peserta-bidang/tambah/:BidangId" element={<TambahPesertaBidang />} />
+            <Route path="/peserta-bidang" element={<PesertaBidang />} /> {/* Rute untuk bidang peserta */}
+            <Route path="/peserta-bidang/tambah" element={<TambahPesertaBidang />} />
             <Route path="/peserta-bidang/edit/:bidangId/:pesertaBidangId" element={<EditPesertaBidang />} />
 
             <Route path="/peserta/section/add/:sectionId" element={<TambahSesiPeserta />} /> {/* Rute untuk menambah peserta ke sesi ujian */}

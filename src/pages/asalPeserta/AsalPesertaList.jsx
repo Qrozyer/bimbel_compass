@@ -59,7 +59,7 @@ const AsalPesertaList = () => {
     <div style={{ margin: '20px auto', padding: '20px', maxWidth: '800px' }}>
       <h2>Data Asal Peserta</h2>
       <div className="d-flex justify-content-start gap-2 mb-3">
-        <button className="btn btn-secondary" onClick={() => navigate(-1)}>
+        <button className="btn btn-secondary" onClick={() => navigate('/dashboard')}>
           ← Kembali
         </button>
         <button className="btn btn-success" onClick={() => navigate('/asal-peserta/add')}>

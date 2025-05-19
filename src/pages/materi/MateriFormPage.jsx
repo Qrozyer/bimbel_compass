@@ -9,7 +9,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 const MateriFormPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { id } = useParams();
+  const { id, SubId: subIdParam } = useParams();
   const materi = useSelector((state) => state.materi.materi); // Ambil data materi dari Redux
 
   const [currentMateri, setCurrentMateri] = useState(null);
@@ -45,7 +45,7 @@ const MateriFormPage = () => {
 
   return (
     <div style={{ margin: '20px auto', padding: '20px', maxWidth: '1200px' }}>
-    <MateriForm key={id} initialData={currentMateri} onSave={handleSave} onCancel={() => navigate('/materi')} />    </div>
+    <MateriForm key={id} subIdParam={subIdParam} initialData={currentMateri} onSave={handleSave} onCancel={() => navigate(-1)} />    </div>
   );
 };
 

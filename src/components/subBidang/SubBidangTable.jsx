@@ -7,8 +7,8 @@ const SubBidangTable = ({ data, onEdit, onDelete, onDetail }) => {
 
   return (
     <div className="table-responsive">
-      <table className="table table-bordered table-striped">
-        <thead className="thead-dark">
+      <table className="table table-bordered table-hover">
+        <thead className="table-secondary">
           <tr>
             <th>No</th>
             <th>Nama Sub Bidang</th>

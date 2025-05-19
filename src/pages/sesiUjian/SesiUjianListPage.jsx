@@ -1,30 +1,27 @@
 import React, { useState, useEffect } from 'react';
 import SesiUjianTable from '../../components/sesiUjian/SesiUjianTable';
-import { fetchData, deleteData } from '../../utils/api'; // Menggunakan API untuk fetch dan delete data
-import { useNavigate } from 'react-router-dom'; // Untuk navigasi
-import Swal from 'sweetalert2'; // Untuk menampilkan alert
+import { fetchData, deleteData } from '../../utils/api';
+import { useNavigate } from 'react-router-dom';
+import Swal from 'sweetalert2';
 
 const SesiUjianListPage = () => {
-  const [sessions, setSessions] = useState([]); // State untuk menyimpan daftar sesi ujian
-  const navigate = useNavigate(); // Hook untuk navigasi ke halaman lain
+  const [sessions, setSessions] = useState([]);
+  const navigate = useNavigate();
 
-  // Ambil data sesi ujian dari API
   useEffect(() => {
     const fetchSessions = async () => {
-      const data = await fetchData('soal/section'); // Ganti dengan API endpoint yang benar
+      const data = await fetchData('soal/section');
       if (data) {
-        setSessions(data); // Set data sesi ujian ke state
+        setSessions(data);
       }
     };
     fetchSessions();
   }, []);
 
-  // Fungsi untuk mengarahkan ke halaman form untuk menambah/edit sesi ujian
   const handleAdd = () => {
-    navigate('/sesi-ujian/form'); // Navigasi ke halaman form
+    navigate('/sesi-ujian/form');
   };
 
-  // Fungsi untuk menghapus sesi ujian
   const handleDelete = async (sectionId) => {
     const result = await Swal.fire({
       title: 'Apakah Anda yakin?',
@@ -34,7 +31,7 @@ const SesiUjianListPage = () => {
       confirmButtonText: 'Ya, hapus!',
       cancelButtonText: 'Batal',
     });
-  
+
     if (result.isConfirmed) {
       const response = await deleteData('soal/section', sectionId);
       if (response) {
@@ -45,17 +42,34 @@ const SesiUjianListPage = () => {
       }
     }
   };
-  
 
   return (
-    <div className="container">
-      <h1 className="mt-4">Daftar Sesi Ujian</h1>
-      <button className="btn btn-primary mb-3" onClick={handleAdd}>
-        Tambah Sesi Ujian
-      </button>
+    <div className="container py-5" style={{ margin: '0 auto', padding: '20px', maxWidth: '1000px' }}>
+      <h1 className="mt-4 mb-4">Daftar Sesi Ujian</h1>
 
-      {/* Menampilkan tabel sesi ujian */}
-      <SesiUjianTable data={sessions} onDelete={handleDelete} onEdit={(session) => navigate(`/sesi-ujian/form/${session.SectionId}`)} />
+      {/* Tombol kembali dan tambah */}
+      <div className="d-flex justify-content-start mb-3">
+        <button className="btn btn-secondary" onClick={() => navigate(-1)}>
+          <i className="fas fa-arrow-left"></i> Kembali
+        </button>
+        <button className="btn btn-success ms-2" onClick={handleAdd}>
+          <i className="fas fa-plus"></i> Tambah Sesi Ujian
+        </button>
+      </div>
+
+      {/* Card untuk menampilkan tabel */}
+      <div className="card rounded-4 shadow-sm">
+        <div className="card-header bg-dark text-white rounded-top-4 d-flex justify-content-between align-items-center">
+          <strong>List Sesi Ujian</strong>
+        </div>
+        <div className="card-body">
+          <SesiUjianTable
+            data={sessions}
+            onDelete={handleDelete}
+            onEdit={(session) => navigate(`/sesi-ujian/form/${session.SectionId}`)}
+          />
+        </div>
+      </div>
     </div>
   );
 };
