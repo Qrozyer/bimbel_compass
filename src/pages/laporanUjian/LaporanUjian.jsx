@@ -1,7 +1,7 @@
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 
-const Ujian = () => {
+const LaporanUjian = () => {
   const navigate = useNavigate();
 
   const handleHasilUjianClick = () => {
@@ -14,6 +14,9 @@ const Ujian = () => {
 
   return (
     <div className="container py-5">
+      <button className="btn btn-secondary mb-5 ml-5" onClick={() => navigate(-1)}>
+        <i className="fas fa-arrow-left me-2"></i> Kembali
+      </button>
       <h3 className="text-center mb-5">Pilih Kategori Ujian</h3>
       <div className="row row-cols-1 row-cols-md-3 g-4 justify-content-center">
         {/* Card: Daftar Hasil Ujian */}
@@ -21,7 +24,7 @@ const Ujian = () => {
           <div className="card text-center h-100 menu-card">
             <div className="card-body">
               <i className="fas fa-poll fa-3x mb-3"></i>
-              <h5 className="card-title">Daftar Hasil Ujian</h5>
+              <h5 className="card-title">Daftar Hasil Ujian Section</h5>
             </div>
           </div>
         </div>
@@ -62,4 +65,4 @@ const Ujian = () => {
   );
 };
 
-export default Ujian;
+export default LaporanUjian;

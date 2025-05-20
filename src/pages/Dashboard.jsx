@@ -99,16 +99,30 @@ const Dashboard = () => {
           >
             <div className="card-body">
               <i className="fas fa-chalkboard-teacher fa-3x mb-3"></i>
-              <h5 className="card-title">Sesi Ujian</h5>
+              <h5 className="card-title">Buat Sesi Ujian</h5>
             </div>
           </div>
         </div>
+
+        {/* Card Menu: Ujian */}
+        <div className="col">
+  <div
+    className="card text-center h-100 menu-card"
+    onClick={() => navigateTo('/ujian')}
+  >
+    <div className="card-body">
+      <i className="fas fa-file-alt fa-3x mb-3"></i>
+      <h5 className="card-title">Ujian</h5>
+    </div>
+  </div>
+</div>
+
 
         {/* Card Menu: Hasil Ujian */}
         <div className="col">
           <div
             className="card text-center h-100 menu-card"
-            onClick={() => navigateTo('/ujian')}
+            onClick={() => navigateTo('/laporan-ujian')}
           >
             <div className="card-body">
               <i className="fas fa-poll fa-3x mb-3"></i>

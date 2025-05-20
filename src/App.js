@@ -49,11 +49,14 @@ import PesertaBidang from './pages/peserta/PesertaBidang';
 import TambahPesertaBidang from './pages/peserta/TambahPesertaBidang';
 import EditPesertaBidang from './pages/peserta/EditPesertaBidang';
 
-import Ujian from './pages/laporanUjian/Ujian';
+import Ujian from './pages/ujian/Ujian';
+import UjianAktivasiForm from './pages/ujian/UjianAktivasiForm';
+
 import HasilUjian from './pages/laporanUjian/HasilUjian';
 import HasilDetailUjian from './pages/laporanUjian/HasilDetailUjian';
 import LaporanUjianMateri from './pages/laporanUjian/LaporanUjianMateri';
-import HasilMateri from './pages/laporanUjian/HasilMateri';
+import HasilMateriListPage from './pages/laporanUjian/HasilMateriListPage';
+import LaporanUjian from './pages/laporanUjian/LaporanUjian';
 
 import SubBidangByBidangPage from './pages/subBidang/SubBidangByBidang';
 import MateriBySubBidang from './pages/materi/MateriBySubBidang';
@@ -130,11 +133,15 @@ function App() {
 
             <Route path="/peserta/section/add/:sectionId" element={<TambahSesiPeserta />} /> {/* Rute untuk menambah peserta ke sesi ujian */}
 
+            <Route path="/ujian" element={<Ujian />} /> {/* Rute untuk halaman ujian */}
+            <Route path="/ujian/section/edit/:id" element={<UjianAktivasiForm />} /> {/* Rute untuk form ujian */}
+            <Route path="/aktivasi-ujian/:sectionid" element={<UjianAktivasiForm />} /> {/* Rute untuk form ujian */}
+
             {/* Rute untuk halaman hasil ujian */}  
-            <Route path="/ujian" element={<Ujian />} /> {/* Rute untuk hasil ujian */}
+            <Route path="/laporan-ujian" element={<LaporanUjian />} /> {/* Rute untuk hasil ujian */}
             <Route path="/hasil-ujian" element={<HasilUjian />} />
             <Route path="/hasil/ujian/:sectionId" element={<HasilDetailUjian />} />  
-            <Route path="/laporan-materi" element={<HasilMateri />} />
+            <Route path="/laporan-materi" element={<HasilMateriListPage />} />
             <Route path="/laporan-materi/:materiid" element={<LaporanUjianMateri />} /> {/* Rute untuk laporan ujian materi */}
 
             <Route path="/asal-peserta" element={<AsalPesertaList />} /> {/* Rute untuk asal peserta */}

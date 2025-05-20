@@ -80,7 +80,7 @@ const SesiUjianTable = ({ data, onEdit, onDelete }) => {
                   </td>
                   <td className="d-flex gap-2">
                     <button
-                      className="btn btn-primary btn-sm"
+                      className="btn btn-secondary btn-sm"
                       onClick={() => goToPeserta(item.SectionId)}
                     >
                       <i className="fas fa-eye"></i> Peserta
@@ -90,6 +90,12 @@ const SesiUjianTable = ({ data, onEdit, onDelete }) => {
                       onClick={() => goToSoal(item.SectionId)}
                     >
                       <i className="fas fa-eye"></i> Soal
+                    </button>
+                    <button
+                      className="btn btn-primary btn-sm"
+                      onClick={() => navigate(`/aktivasi-ujian/${item.SectionId}`)}
+                    >
+                      <i className="fas fa-eye"></i> Aktivasi
                     </button>
                   </td>
                   <td>
