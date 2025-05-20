@@ -1,12 +1,11 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import { editorConfig } from '../../utils/editorConfig';
+import React, { useState, useEffect } from 'react';
+import { Editor } from '@tinymce/tinymce-react';
 import Swal from 'sweetalert2';
 import { fetchData } from '../../utils/api';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import tinymceFullConfig from '../../utils/configTiny'; // import configTiny
+const TINYMCE_API_KEY = process.env.REACT_APP_TINYMCE_API_KEY;
 
 const SoalForm = ({ initialData, onSave, onCancel }) => {
-  // State untuk menyimpan semua nilai editor dalam objek
   const [editorData, setEditorData] = useState({
     pertanyaan: initialData?.SoalPertanyaan || '',
     jawabanA: initialData?.SoalA || '',
@@ -21,11 +20,8 @@ const SoalForm = ({ initialData, onSave, onCancel }) => {
   const [video, setVideo] = useState(initialData?.SoalVideo || '');
   const [materiList, setMateriList] = useState([]);
   const [selectedMateri, setSelectedMateri] = useState(initialData?.MateriId || '');
-  
-  const editorRef = useRef(null);
 
-  useEffect(() => { 
-    // Set initial data for the editor
+  useEffect(() => {
     setEditorData({
       pertanyaan: initialData?.SoalPertanyaan || '',
       jawabanA: initialData?.SoalA || '',
@@ -37,8 +33,8 @@ const SoalForm = ({ initialData, onSave, onCancel }) => {
     });
     setKunciJawaban(initialData?.SoalJawaban || '');
     setVideo(initialData?.SoalVideo || '');
-    setSelectedMateri(initialData?.MateriId || '');   
-    // Fetch materi data on component mount
+    setSelectedMateri(initialData?.MateriId || '');
+
     const fetchMateriData = async () => {
       const materiData = await fetchData('materi');
       if (materiData) {
@@ -47,22 +43,20 @@ const SoalForm = ({ initialData, onSave, onCancel }) => {
     };
     fetchMateriData();
   }, [initialData]);
-  
 
-  const handleEditorChange = (editorName, editor) => {
-    const editorValue = editor.getData();  // Ambil data dari editor
-
-    // Perbarui state dengan menggunakan nama editor (seperti 'pertanyaan', 'jawabanA', dll)
+  const handleEditorChange = (editorName, content) => {
     setEditorData(prevData => ({
       ...prevData,
-      [editorName]: editorValue,  // Update data berdasarkan nama editor
+      [editorName]: content,
     }));
   };
 
   const handleSave = () => {
-    console.log('Editor Data:', editorData);  // Log untuk memeriksa nilai editorData
-    if (!editorData.pertanyaan || !editorData.jawabanA || !editorData.jawabanB || !editorData.jawabanC || 
-        !editorData.jawabanD || !editorData.jawabanE || !kunciJawaban || !editorData.pembahasan || !selectedMateri) {
+    if (
+      !editorData.pertanyaan || !editorData.jawabanA || !editorData.jawabanB ||
+      !editorData.jawabanC || !editorData.jawabanD || !editorData.jawabanE ||
+      !kunciJawaban || !editorData.pembahasan || !selectedMateri
+    ) {
       Swal.fire('Error', 'Semua field harus diisi!', 'error');
       return;
     }
@@ -95,7 +89,7 @@ const SoalForm = ({ initialData, onSave, onCancel }) => {
             onChange={(e) => setSelectedMateri(e.target.value)}
           >
             <option value="">Pilih Materi</option>
-            {materiList.map((materi) => (
+            {materiList.map(materi => (
               <option key={materi.MateriId} value={materi.MateriId}>
                 {materi.MateriJudul}
               </option>
@@ -103,79 +97,73 @@ const SoalForm = ({ initialData, onSave, onCancel }) => {
           </select>
         </div>
 
-        {/* CKEditor untuk Pertanyaan */}
+        {/* TinyMCE Editor untuk Pertanyaan */}
         <div className="form-group">
           <label>Pertanyaan</label>
-          <CKEditor
-            editor={ClassicEditor}
-            config={editorConfig}
-            data={editorData.pertanyaan}
-            onChange={(event, editor) => handleEditorChange('pertanyaan', editor)} // Pass editorName
-            onReady={(editor) => { editorRef.current = editor; }}
+          <Editor
+            apiKey={TINYMCE_API_KEY}
+            value={editorData.pertanyaan}
+            init={{ ...tinymceFullConfig, height: 200, menubar: false }}
+            onEditorChange={(content) => handleEditorChange('pertanyaan', content)}
           />
         </div>
 
-        {/* CKEditor untuk Jawaban A */}
+        {/* Jawaban A */}
         <div className="form-group">
           <label>Jawaban A</label>
-          <CKEditor
-            editor={ClassicEditor}
-            config={editorConfig}
-            data={editorData.jawabanA}
-            onChange={(event, editor) => handleEditorChange('jawabanA', editor)} // Pass editorName
-            onReady={(editor) => { editorRef.current = editor; }}
+          <Editor
+            apiKey={TINYMCE_API_KEY}
+            value={editorData.jawabanA}
+            init={{ ...tinymceFullConfig, height: 150, menubar: false }}
+            onEditorChange={(content) => handleEditorChange('jawabanA', content)}
           />
         </div>
 
-        {/* CKEditor untuk Jawaban B */}
+        {/* Jawaban B */}
         <div className="form-group">
           <label>Jawaban B</label>
-          <CKEditor
-            editor={ClassicEditor}
-            config={editorConfig}
-            data={editorData.jawabanB}
-            onChange={(event, editor) => handleEditorChange('jawabanB', editor)} // Pass editorName
-            onReady={(editor) => { editorRef.current = editor; }}
+          <Editor
+            apiKey={TINYMCE_API_KEY}
+            value={editorData.jawabanB}
+            init={{ ...tinymceFullConfig, height: 150, menubar: false }}
+            onEditorChange={(content) => handleEditorChange('jawabanB', content)}
           />
         </div>
 
-        {/* CKEditor untuk Jawaban C */}
+        {/* Jawaban C */}
         <div className="form-group">
           <label>Jawaban C</label>
-          <CKEditor
-            editor={ClassicEditor}
-            config={editorConfig}
-            data={editorData.jawabanC}
-            onChange={(event, editor) => handleEditorChange('jawabanC', editor)} // Pass editorName
-            onReady={(editor) => { editorRef.current = editor; }}
+          <Editor
+            apiKey={TINYMCE_API_KEY}
+            value={editorData.jawabanC}
+            init={{ ...tinymceFullConfig, height: 150, menubar: false }}
+            onEditorChange={(content) => handleEditorChange('jawabanC', content)}
           />
         </div>
 
-        {/* CKEditor untuk Jawaban D */}
+        {/* Jawaban D */}
         <div className="form-group">
           <label>Jawaban D</label>
-          <CKEditor
-            editor={ClassicEditor}
-            config={editorConfig}
-            data={editorData.jawabanD}
-            onChange={(event, editor) => handleEditorChange('jawabanD', editor)} // Pass editorName
-            onReady={(editor) => { editorRef.current = editor; }}
+          <Editor
+            apiKey={TINYMCE_API_KEY}
+            value={editorData.jawabanD}
+            init={{ ...tinymceFullConfig, height: 150, menubar: false }}
+            onEditorChange={(content) => handleEditorChange('jawabanD', content)}
           />
         </div>
 
-        {/* CKEditor untuk Jawaban E */}
+        {/* Jawaban E */}
         <div className="form-group">
           <label>Jawaban E</label>
-          <CKEditor
-            editor={ClassicEditor}
-            config={editorConfig}
-            data={editorData.jawabanE}
-            onChange={(event, editor) => handleEditorChange('jawabanE', editor)} // Pass editorName
-            onReady={(editor) => { editorRef.current = editor; }}
+          <Editor
+            apiKey={TINYMCE_API_KEY}
+            value={editorData.jawabanE}
+            init={{ ...tinymceFullConfig, height: 150, menubar: false }}
+            onEditorChange={(content) => handleEditorChange('jawabanE', content)}
           />
         </div>
 
-        {/* Input untuk Kunci Jawaban */}
+        {/* Kunci Jawaban */}
         <div className="form-group">
           <label>Kunci Jawaban</label>
           <input
@@ -186,19 +174,18 @@ const SoalForm = ({ initialData, onSave, onCancel }) => {
           />
         </div>
 
-        {/* CKEditor untuk Pembahasan */}
+        {/* Pembahasan */}
         <div className="form-group">
           <label>Pembahasan</label>
-          <CKEditor
-            editor={ClassicEditor}
-            config={editorConfig}
-            data={editorData.pembahasan}
-            onChange={(event, editor) => handleEditorChange('pembahasan', editor)} // Pass editorName
-            onReady={(editor) => { editorRef.current = editor; }}
+          <Editor
+            apiKey={TINYMCE_API_KEY}
+            value={editorData.pembahasan}
+            init={{ ...tinymceFullConfig, height: 200, menubar: false }}
+            onEditorChange={(content) => handleEditorChange('pembahasan', content)}
           />
         </div>
 
-        {/* Input untuk Video */}
+        {/* Video */}
         <div className="form-group">
           <label>Video</label>
           <input

@@ -1,20 +1,21 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import { editorConfig } from '../../utils/editorConfig';
+import React, { useState, useEffect } from 'react';
+import { Editor } from '@tinymce/tinymce-react';
 import Swal from 'sweetalert2';
 import { fetchData } from '../../utils/api';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import tinymceFullConfig from '../../utils/configTiny'; // import configTiny
+
+const TINYMCE_API_KEY = process.env.REACT_APP_TINYMCE_API_KEY;
 
 const SubBidangForm = ({ initialData, onSave, onCancel }) => {
   const [SubNama, setSubNama] = useState(String(initialData?.SubNama || ''));
   const [editorData, setEditorData] = useState(String(initialData?.SubKeterangan || ''));
-  const [bidangList, setBidangList] = useState([]); // State untuk menyimpan data bidang
-  const [selectedBidang, setSelectedBidang] = useState(initialData?.BidangId || ''); // State untuk menyimpan bidang yang dipilih
-  const editorRef = useRef(null);
+  const [bidangList, setBidangList] = useState([]);
+  const [selectedBidang, setSelectedBidang] = useState(initialData?.BidangId || '');
 
   useEffect(() => {
     setSubNama(String(initialData?.SubNama || ''));
     setEditorData(String(initialData?.SubKeterangan || ''));
+    setSelectedBidang(initialData?.BidangId || '');
 
     const fetchBidangData = async () => {
       const bidangData = await fetchData('bidang');
@@ -25,15 +26,8 @@ const SubBidangForm = ({ initialData, onSave, onCancel }) => {
     fetchBidangData();
   }, [initialData]);
 
-  useEffect(() => {
-    if (initialData?.BidangId) {
-      setSelectedBidang(initialData?.BidangId);
-    }
-  }, [initialData]);
-
-
-  const handleEditorChange = (event, editor) => {
-    setEditorData(editor.getData());
+  const handleEditorChange = (content) => {
+    setEditorData(content);
   };
 
   const handleSave = () => {
@@ -41,13 +35,19 @@ const SubBidangForm = ({ initialData, onSave, onCancel }) => {
       Swal.fire('Error', 'Semua field harus diisi!', 'error');
       return;
     }
-    onSave({ SubNama, SubKeterangan: editorData, BidangId: parseInt(selectedBidang) });
+
+    onSave({
+      SubNama,
+      SubKeterangan: editorData,
+      BidangId: parseInt(selectedBidang),
+    });
   };
 
   return (
     <div className="form-container card">
       <div className="card-body">
         <h4>{initialData ? 'Edit Sub Bidang' : 'Tambah Sub Bidang'}</h4>
+
         <div className="form-group">
           <label>Bidang</label>
           <select
@@ -63,6 +63,7 @@ const SubBidangForm = ({ initialData, onSave, onCancel }) => {
             ))}
           </select>
         </div>
+
         <div className="form-group">
           <label>Nama Sub Bidang</label>
           <input
@@ -72,18 +73,17 @@ const SubBidangForm = ({ initialData, onSave, onCancel }) => {
             onChange={(e) => setSubNama(e.target.value)}
           />
         </div>
+
         <div className="form-group">
           <label>Keterangan</label>
-          <div id="editor">
-            <CKEditor
-              editor={ClassicEditor}
-              config={editorConfig}
-              data={editorData}
-              onChange={handleEditorChange}
-              onReady={(editor) => { editorRef.current = editor; }}
-            />
-          </div>
+          <Editor
+            apiKey={TINYMCE_API_KEY}
+            value={editorData}
+            init={{ ...tinymceFullConfig, height: 300, menubar: false }}
+            onEditorChange={handleEditorChange}
+          />
         </div>
+
         <div className="form-group">
           <button className="btn btn-secondary mr-2" onClick={onCancel}>
             Batal

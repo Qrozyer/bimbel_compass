@@ -132,7 +132,7 @@ function App() {
 
             {/* Rute untuk halaman hasil ujian */}  
             <Route path="/ujian" element={<Ujian />} /> {/* Rute untuk hasil ujian */}
-            <Route path="/hasil-ujian" element={<HasilUjian />} />          
+            <Route path="/hasil-ujian" element={<HasilUjian />} />
             <Route path="/hasil/ujian/:sectionId" element={<HasilDetailUjian />} />  
             <Route path="/laporan-materi" element={<HasilMateri />} />
             <Route path="/laporan-materi/:materiid" element={<LaporanUjianMateri />} /> {/* Rute untuk laporan ujian materi */}

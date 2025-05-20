@@ -1,25 +1,24 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import { editorConfig } from '../../utils/editorConfig';
+import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
+import { Editor } from '@tinymce/tinymce-react';
 import { fetchData } from '../../utils/api';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import tinymceFullConfig from '../../utils/configTiny'; // Import configTiny
+
+const TINYMCE_API_KEY = process.env.REACT_APP_TINYMCE_API_KEY;
 
 const MateriForm = ({ initialData, subIdParam, onSave, onCancel }) => {
-  const [MateriJudul, setMateriJudul] = useState(String(initialData?.MateriJudul || ''));
-  const [editorData, setEditorData] = useState(String(initialData?.MateriIsi || ''));
+  const [MateriJudul, setMateriJudul] = useState(initialData?.MateriJudul || '');
+  const [editorData, setEditorData] = useState(initialData?.MateriIsi || '');
   const [videoUrl, setVideoUrl] = useState(initialData?.MateriVideo || '');
   const [subBidangList, setSubBidangList] = useState([]);
   const [selectedSubBidang, setSelectedSubBidang] = useState(
-    String(subIdParam || initialData?.SubId || '')
+    subIdParam || initialData?.SubId || ''
   );
 
-  const editorRef = useRef(null);
-
   useEffect(() => {
-    setSelectedSubBidang(String(subIdParam || initialData?.SubId || ''));
-    setMateriJudul(String(initialData?.MateriJudul || ''));
-    setEditorData(String(initialData?.MateriIsi || ''));
+    setSelectedSubBidang(subIdParam || initialData?.SubId || '');
+    setMateriJudul(initialData?.MateriJudul || '');
+    setEditorData(initialData?.MateriIsi || '');
     setVideoUrl(initialData?.MateriVideo || '');
 
     const fetchSubBidangData = async () => {
@@ -29,11 +28,7 @@ const MateriForm = ({ initialData, subIdParam, onSave, onCancel }) => {
       }
     };
     fetchSubBidangData();
-  }, [initialData]);
-
-  const handleEditorChange = (event, editor) => {
-    setEditorData(editor.getData());
-  };
+  }, [initialData, subIdParam]);
 
   const handleSave = () => {
     if (!MateriJudul || !editorData || !selectedSubBidang) {
@@ -52,6 +47,7 @@ const MateriForm = ({ initialData, subIdParam, onSave, onCancel }) => {
     <div className="form-container card">
       <div className="card-body">
         <h4>{initialData ? 'Edit Materi' : 'Tambah Materi'}</h4>
+
         <div className="form-group">
           <label>Sub Bidang</label>
           <select
@@ -67,6 +63,7 @@ const MateriForm = ({ initialData, subIdParam, onSave, onCancel }) => {
             ))}
           </select>
         </div>
+
         <div className="form-group">
           <label>Judul Materi</label>
           <input
@@ -76,6 +73,7 @@ const MateriForm = ({ initialData, subIdParam, onSave, onCancel }) => {
             onChange={(e) => setMateriJudul(e.target.value)}
           />
         </div>
+
         <div className="form-group">
           <label>URL Video</label>
           <input
@@ -86,21 +84,18 @@ const MateriForm = ({ initialData, subIdParam, onSave, onCancel }) => {
             placeholder="example: https://www.youtube.com/embed/xxxxx"
           />
         </div>
+
         <div className="form-group">
           <label>Isi Materi</label>
-          <div id="editor">
-            <CKEditor
-              editor={ClassicEditor}
-              config={editorConfig}
-              data={editorData}
-              onChange={handleEditorChange}
-              onReady={(editor) => {
-                editorRef.current = editor;
-              }}
-            />
-          </div>
+          <Editor
+            apiKey={TINYMCE_API_KEY}
+            value={editorData}
+            init={{ ...tinymceFullConfig, height: 300, menubar: false }}
+            onEditorChange={(content) => setEditorData(content)}
+          />
         </div>
-        <div className="form-group">
+
+        <div className="form-group mt-3">
           <button className="btn btn-secondary mr-2" onClick={onCancel}>
             Batal
           </button>

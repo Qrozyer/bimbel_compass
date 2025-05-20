@@ -1,9 +1,11 @@
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { Editor } from '@tinymce/tinymce-react';
 import { fetchData, addData, editData } from '../../utils/api';
 import { useNavigate } from 'react-router-dom';
+import tinymceFullConfig from '../../utils/configTiny';
+const TINYMCE_API_KEY = process.env.REACT_APP_TINYMCE_API_KEY;
+
 
 const BuatSoal = ({ soalId, onSuccess, onCancel }) => {
   const navigate = useNavigate();
@@ -93,8 +95,8 @@ const BuatSoal = ({ soalId, onSuccess, onCancel }) => {
     }
   }, [soalId]);
 
-  const handleEditorChange = (field, editor) => {
-    setEditorData(prev => ({ ...prev, [field]: editor.getData() }));
+  const handleEditorChange = (field, content) => {
+    setEditorData(prev => ({ ...prev, [field]: content }));
   };
 
   const handleSubmit = async () => {
@@ -143,6 +145,7 @@ const BuatSoal = ({ soalId, onSuccess, onCancel }) => {
     }
   };
 
+
   return (
     <div className="container py-4 pt-5" style={{ margin: 'auto', padding: '50px', maxWidth: '1000px' }}>
       <div>
@@ -150,138 +153,161 @@ const BuatSoal = ({ soalId, onSuccess, onCancel }) => {
           ← Kembali
         </button>
       </div>
-    <div style={{margin: '20px auto', padding: 20, border: '2px solid #ccc', borderRadius: 8 }}>
-      <h3>{soalId ? 'Edit Soal' : 'Buat Soal'}</h3>
+      <div style={{ margin: '20px auto', padding: 20, border: '2px solid #ccc', borderRadius: 8 }}>
+        <h3>{soalId ? 'Edit Soal' : 'Buat Soal'}</h3>
 
-      {/* Dropdown Bidang */}
-      <label>Bidang</label>
-      <select value={selectedBidang} onChange={e => setSelectedBidang(e.target.value)} className="form-control" style={{ marginBottom: 10 }}>
-        <option value="">-- Pilih Bidang --</option>
-        {bidangList.map(b => <option key={b.BidangId} value={b.BidangId}>{b.BidangNama}</option>)}
-      </select>
+        {/* Dropdown Bidang */}
+        <label>Bidang</label>
+        <select
+          value={selectedBidang}
+          onChange={(e) => setSelectedBidang(e.target.value)}
+          className="form-control"
+          style={{ marginBottom: 10 }}
+        >
+          <option value="">-- Pilih Bidang --</option>
+          {bidangList.map((b) => (
+            <option key={b.BidangId} value={b.BidangId}>
+              {b.BidangNama}
+            </option>
+          ))}
+        </select>
 
-      {/* Dropdown Sub Bidang */}
-      <label>Sub Bidang</label>
-      <select
-        value={selectedSubBidang}
-        onChange={e => setSelectedSubBidang(e.target.value)}
-        disabled={!selectedBidang}
-        className="form-control"
-        style={{ marginBottom: 10 }}
-      >
-        <option value="">-- Pilih Sub Bidang --</option>
-        {subBidangList.map(s => <option key={s.SubId} value={s.SubId}>{s.SubNama}</option>)}
-      </select>
+        {/* Dropdown Sub Bidang */}
+        <label>Sub Bidang</label>
+        <select
+          value={selectedSubBidang}
+          onChange={(e) => setSelectedSubBidang(e.target.value)}
+          disabled={!selectedBidang}
+          className="form-control"
+          style={{ marginBottom: 10 }}
+        >
+          <option value="">-- Pilih Sub Bidang --</option>
+          {subBidangList.map((s) => (
+            <option key={s.SubId} value={s.SubId}>
+              {s.SubNama}
+            </option>
+          ))}
+        </select>
 
-      {/* Dropdown Materi */}
-      <label>Materi</label>
-      <select
-        value={selectedMateri}
-        onChange={e => setSelectedMateri(e.target.value)}
-        disabled={!selectedSubBidang}
-        className="form-control"
-        style={{ marginBottom: 10 }}
-      >
-        <option value="">-- Pilih Materi --</option>
-        {materiList.map(m => <option key={m.MateriId} value={m.MateriId}>{m.MateriJudul}</option>)}
-      </select>
+        {/* Dropdown Materi */}
+        <label>Materi</label>
+        <select
+          value={selectedMateri}
+          onChange={(e) => setSelectedMateri(e.target.value)}
+          disabled={!selectedSubBidang}
+          className="form-control"
+          style={{ marginBottom: 10 }}
+        >
+          <option value="">-- Pilih Materi --</option>
+          {materiList.map((m) => (
+            <option key={m.MateriId} value={m.MateriId}>
+              {m.MateriJudul}
+            </option>
+          ))}
+        </select>
 
-      {isFormReady ? (
-  <div className="card mt-4">
-    <div className="card-body">
-      <label>Pertanyaan</label>
-      <CKEditor
-        editor={ClassicEditor}
-        data={editorData.pertanyaan}
-        onChange={(event, editor) => handleEditorChange('pertanyaan', editor)}
-      />
-      <br />
+        {isFormReady ? (
+          <div className="card mt-4">
+            <div className="card-body">
+              <label>Pertanyaan</label>
+              <Editor
+                apiKey={TINYMCE_API_KEY}
+                value={editorData.pertanyaan}
+                init={tinymceFullConfig}
+                onEditorChange={(content) => handleEditorChange('pertanyaan', content)}
+              />
+              <br />
 
-      <label>Jawaban A</label>
-      <CKEditor
-        editor={ClassicEditor}
-        data={editorData.jawabanA}
-        onChange={(event, editor) => handleEditorChange('jawabanA', editor)}
-      />
-      <br />
+              <label>Jawaban A</label>
+              <Editor
+                apiKey={TINYMCE_API_KEY}
+                value={editorData.jawabanA}
+                init={tinymceFullConfig}
+                onEditorChange={(content) => handleEditorChange('jawabanA', content)}
+              />
+              <br />
 
-      <label>Jawaban B</label>
-      <CKEditor
-        editor={ClassicEditor}
-        data={editorData.jawabanB}
-        onChange={(event, editor) => handleEditorChange('jawabanB', editor)}
-      />
-      <br />
+              <label>Jawaban B</label>
+              <Editor
+                apiKey={TINYMCE_API_KEY}
+                value={editorData.jawabanB}
+                init={tinymceFullConfig}
+                onEditorChange={(content) => handleEditorChange('jawabanB', content)}
+              />
+              <br />
 
-      <label>Jawaban C</label>
-      <CKEditor
-        editor={ClassicEditor}
-        data={editorData.jawabanC}
-        onChange={(event, editor) => handleEditorChange('jawabanC', editor)}
-      />
-      <br />
+              <label>Jawaban C</label>
+              <Editor
+                apiKey={TINYMCE_API_KEY}
+                value={editorData.jawabanC}
+                init={tinymceFullConfig}
+                onEditorChange={(content) => handleEditorChange('jawabanC', content)}
+              />
+              <br />
 
-      <label>Jawaban D</label>
-      <CKEditor
-        editor={ClassicEditor}
-        data={editorData.jawabanD}
-        onChange={(event, editor) => handleEditorChange('jawabanD', editor)}
-      />
-      <br />
+              <label>Jawaban D</label>
+              <Editor
+                apiKey={TINYMCE_API_KEY}
+                value={editorData.jawabanD}
+                init={tinymceFullConfig}
+                onEditorChange={(content) => handleEditorChange('jawabanD', content)}
+              />
+              <br />
 
-      <label>Jawaban E</label>
-      <CKEditor
-        editor={ClassicEditor}
-        data={editorData.jawabanE}
-        onChange={(event, editor) => handleEditorChange('jawabanE', editor)}
-      />
-      <br />
+              <label>Jawaban E</label>
+              <Editor
+                apiKey={TINYMCE_API_KEY}
+                value={editorData.jawabanE}
+                init={tinymceFullConfig}
+                onEditorChange={(content) => handleEditorChange('jawabanE', content)}
+              />
+              <br />
 
-      <label>Kunci Jawaban</label>
-      <input
-        type="text"
-        value={kunciJawaban}
-        onChange={e => setKunciJawaban(e.target.value)}
-        className="form-control"
-        style={{ marginBottom: 10 }}
-        placeholder="Contoh: A / B / C / D / E"
-      />
+              <label>Kunci Jawaban</label>
+              <input
+                type="text"
+                value={kunciJawaban}
+                onChange={(e) => setKunciJawaban(e.target.value)}
+                className="form-control"
+                style={{ marginBottom: 10 }}
+                placeholder="Contoh: A / B / C / D / E"
+              />
 
-      <label>Pembahasan</label>
-      <CKEditor
-        editor={ClassicEditor}
-        data={editorData.pembahasan}
-        onChange={(event, editor) => handleEditorChange('pembahasan', editor)}
-      />
-      <br />
+              <label>Pembahasan</label>
+              <Editor
+                apiKey={TINYMCE_API_KEY}
+                value={editorData.pembahasan}
+                init={tinymceFullConfig}
+                onEditorChange={(content) => handleEditorChange('pembahasan', content)}
+              />
+              <br />
 
-      <label>Video (opsional)</label>
-      <input
-        type="text"
-        value={video}
-        onChange={e => setVideo(e.target.value)}
-        className="form-control"
-        placeholder="Masukkan link video jika ada"
-        style={{ marginBottom: 10 }}
-      />
+              <label>Video (opsional)</label>
+<Editor
+  apiKey={TINYMCE_API_KEY}
+  value={video}
+  init={tinymceFullConfig}
+  onEditorChange={(content) => setVideo(content)}
+/>
+<br />
 
-      <div style={{ marginTop: 20 }}>
-        <button onClick={handleSubmit} className="btn btn-primary me-2">
-          Simpan
-        </button>
-        <button onClick={() => navigate(-1)} className="btn btn-secondary">
-          Batal
-        </button>
+
+              <div style={{ marginTop: 20 }}>
+                <button onClick={handleSubmit} className="btn btn-primary me-2">
+                  Simpan
+                </button>
+                <button onClick={() => navigate(-1)} className="btn btn-secondary">
+                  Batal
+                </button>
+              </div>
+            </div>
+          </div>
+        ) : (
+          <div className="alert alert-info mt-4">
+            Silakan pilih <strong>Bidang</strong>, <strong>Sub Bidang</strong>, dan <strong>Materi</strong> terlebih dahulu untuk mengisi soal.
+          </div>
+        )}
       </div>
-    </div>
-  </div>
-) : (
-  <div className="alert alert-info mt-4">
-    Silakan pilih <strong>Bidang</strong>, <strong>Sub Bidang</strong>, dan <strong>Materi</strong> terlebih dahulu untuk mengisi soal.
-  </div>
-)}
-
-    </div>
     </div>
   );
 };

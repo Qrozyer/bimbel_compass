@@ -1,23 +1,18 @@
-import React, { useState, useRef, useEffect } from 'react';
-import { CKEditor } from '@ckeditor/ckeditor5-react';
-import { editorConfig } from '../../utils/editorConfig';
+import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
-import ClassicEditor from '@ckeditor/ckeditor5-build-classic';
+import { Editor } from '@tinymce/tinymce-react';
+import tinymceFullConfig from '../../utils/configTiny'; // Import configTiny
+
+const TINYMCE_API_KEY = process.env.REACT_APP_TINYMCE_API_KEY;
 
 const BidangForm = ({ initialData, onSave, onCancel }) => {
-  console.log("BidangForm initialData:", initialData);
-  const [BidangNama, setBidangNama] = useState(String(initialData?.BidangNama || ''));
-  const [editorData, setEditorData] = useState(String(initialData?.BidangKeterangan || ''));
-  const editorRef = useRef(null);
+  const [BidangNama, setBidangNama] = useState(initialData?.BidangNama || '');
+  const [editorData, setEditorData] = useState(initialData?.BidangKeterangan || '');
 
   useEffect(() => {
-    setBidangNama(String(initialData?.BidangNama || ''));
-    setEditorData(String(initialData?.BidangKeterangan || ''));
+    setBidangNama(initialData?.BidangNama || '');
+    setEditorData(initialData?.BidangKeterangan || '');
   }, [initialData]);
-
-  const handleEditorChange = (event, editor) => {
-    setEditorData(editor.getData());
-  };
 
   const handleSave = () => {
     if (!BidangNama || !editorData) {
@@ -31,6 +26,7 @@ const BidangForm = ({ initialData, onSave, onCancel }) => {
     <div className="form-container card">
       <div className="card-body">
         <h4>{initialData ? 'Edit Bidang' : 'Tambah Bidang'}</h4>
+
         <div className="form-group">
           <label>Nama Bidang</label>
           <input
@@ -40,19 +36,18 @@ const BidangForm = ({ initialData, onSave, onCancel }) => {
             onChange={(e) => setBidangNama(e.target.value)}
           />
         </div>
+
         <div className="form-group">
           <label>Keterangan</label>
-          <div id="editor">
-            <CKEditor
-              editor={ClassicEditor}
-              config={editorConfig}
-              data={editorData}
-              onChange={handleEditorChange}
-              onReady={(editor) => { editorRef.current = editor; }}
-            />
-          </div>
+          <Editor
+            apiKey={TINYMCE_API_KEY}
+            value={editorData}
+            init={{ ...tinymceFullConfig, height: 300, menubar: false }}
+            onEditorChange={(content) => setEditorData(content)}
+          />
         </div>
-        <div className="form-group">
+
+        <div className="form-group mt-3">
           <button className="btn btn-secondary mr-2" onClick={onCancel}>
             Batal
           </button>
