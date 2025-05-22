@@ -59,7 +59,7 @@ const SoalListPage = () => {
     : soal;
 
   return (
-    <div className="container pt-5" style={{ maxWidth: '1000px' }}>
+    <div className="container pt-5" style={{ maxWidth: '1200px' }}>
       {/* Tombol Navigasi */}
       <div className="d-flex justify-content-start align-items-center mb-3">
         <button className="btn btn-secondary me-2" onClick={() => navigate(-1)}>

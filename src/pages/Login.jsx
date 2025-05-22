@@ -86,7 +86,7 @@ function Login() {
       <div className="login-box">
         <div className="card card-outline card-primary">
           <div className="card-header text-center">
-            <p className="h1">Bimbel ByPASS</p>
+            <p className="h1">Bimbel Kebidanan</p>
           </div>
           <div className="card-body">
             <p className="login-box-msg">Login With Your Account</p>

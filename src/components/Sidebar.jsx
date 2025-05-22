@@ -1,17 +1,30 @@
-import React from 'react';
+import React, { useState } from 'react';
 import { Link } from 'react-router-dom';
 
 const Sidebar = () => {
+  const [openMenu, setOpenMenu] = useState({
+    peserta: false,
+    soal: false,
+    ujian: false,
+  });
+
+  const toggleMenu = (menuName) => {
+    setOpenMenu((prev) => ({
+      ...prev,
+      [menuName]: !prev[menuName],
+    }));
+  };
+
   return (
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
       <Link to="/" className="brand-link">
         <span className="brand-text font-weight-light">Bimbel ByPASS</span>
       </Link>
+
       <div className="sidebar">
         <nav className="mt-2">
           <ul
             className="nav nav-pills nav-sidebar flex-column"
-            data-widget="treeview"
             role="menu"
             data-accordion="false"
           >
@@ -47,16 +60,19 @@ const Sidebar = () => {
               </Link>
             </li>
 
-            {/* Peserta - Dengan Submenu */}
-            <li className="nav-item has-treeview">
-              <a href="#" className="nav-link">
+            {/* Peserta - Submenu */}
+            <li className={`nav-item has-treeview ${openMenu.peserta ? 'menu-open' : ''}`}>
+              <button
+                onClick={() => toggleMenu('peserta')}
+                className="nav-link w-100 text-start bg-transparent border-0"
+              >
                 <i className="nav-icon fas fa-users"></i>
                 <p>
                   Peserta
                   <i className="right fas fa-angle-left"></i>
                 </p>
-              </a>
-              <ul className="nav nav-treeview ms-3">
+              </button>
+              <ul className={`nav nav-treeview ms-3 ${openMenu.peserta ? 'd-block' : 'd-none'}`}>
                 <li className="nav-item">
                   <Link to="/peserta" className="nav-link">
                     <i className="far fa-circle nav-icon"></i>
@@ -84,16 +100,19 @@ const Sidebar = () => {
               </ul>
             </li>
 
-            {/* Soal - Dengan Submenu */}
-            <li className="nav-item has-treeview">
-              <a href="#" className="nav-link">
+            {/* Soal - Submenu */}
+            <li className={`nav-item has-treeview ${openMenu.soal ? 'menu-open' : ''}`}>
+              <button
+                onClick={() => toggleMenu('soal')}
+                className="nav-link w-100 text-start bg-transparent border-0"
+              >
                 <i className="nav-icon fas fa-question-circle"></i>
                 <p>
                   Soal
                   <i className="right fas fa-angle-left"></i>
                 </p>
-              </a>
-              <ul className="nav nav-treeview ms-3">
+              </button>
+              <ul className={`nav nav-treeview ms-3 ${openMenu.soal ? 'd-block' : 'd-none'}`}>
                 <li className="nav-item">
                   <Link to="/buat-soal" className="nav-link">
                     <i className="far fa-circle nav-icon"></i>
@@ -109,16 +128,19 @@ const Sidebar = () => {
               </ul>
             </li>
 
-            {/* Ujian - Dengan Submenu */}
-            <li className="nav-item has-treeview">
-              <a href="#" className="nav-link">
+            {/* Ujian - Submenu */}
+            <li className={`nav-item has-treeview ${openMenu.ujian ? 'menu-open' : ''}`}>
+              <button
+                onClick={() => toggleMenu('ujian')}
+                className="nav-link w-100 text-start bg-transparent border-0"
+              >
                 <i className="nav-icon fas fa-chalkboard-teacher"></i>
                 <p>
                   Ujian
                   <i className="right fas fa-angle-left"></i>
                 </p>
-              </a>
-              <ul className="nav nav-treeview ms-3">
+              </button>
+              <ul className={`nav nav-treeview ms-3 ${openMenu.ujian ? 'd-block' : 'd-none'}`}>
                 <li className="nav-item">
                   <Link to="/sesi-ujian" className="nav-link">
                     <i className="far fa-circle nav-icon"></i>
@@ -139,7 +161,6 @@ const Sidebar = () => {
                 </li>
               </ul>
             </li>
-
           </ul>
         </nav>
       </div>
