@@ -41,12 +41,13 @@ const UjianForm = ({ initialData, onSave, onCancel }) => {
     }
 
     const payload = {
-      TglUjian,
-      AwalUjian,
-      AkhirUjian,
-      Durasi: parseInt(Durasi, 10),
-      Tampil: parseInt(Tampil, 10),
-    };
+  TglUjian,
+  Mulai: AwalUjian,
+  Akhir: AkhirUjian,
+  Durasi: parseInt(Durasi, 10),
+  Tampil: parseInt(Tampil, 10),
+};
+
 
     onSave(payload);
   };
@@ -121,7 +122,7 @@ const UjianForm = ({ initialData, onSave, onCancel }) => {
 
         <div className="form-group mt-3">
           <button className="btn btn-secondary mr-2" onClick={onCancel}>Batal</button>
-          <button className="btn btn-primary" onClick={handleSave}>Simpan</button>
+          <button className="btn btn-success" onClick={handleSave}>Simpan</button>
         </div>
       </div>
     </div>
