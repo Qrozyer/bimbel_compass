@@ -90,7 +90,7 @@ const SesiUjianFormPage = () => {
           </div>
 
           <div className="d-flex justify-content-between mt-4">
-            <button className="btn btn-secondary" onClick={() => navigate('/sesi-ujian')}>
+            <button className="btn btn-secondary" onClick={() => navigate(-1)}>
               ← Kembali
             </button>
             <button className="btn btn-primary" onClick={handleSubmit}>

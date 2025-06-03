@@ -50,7 +50,7 @@ import TambahPesertaBidang from './pages/peserta/TambahPesertaBidang';
 import EditPesertaBidang from './pages/peserta/EditPesertaBidang';
 
 import Ujian from './pages/ujian/Ujian';
-import UjianAktivasiForm from './pages/ujian/UjianAktivasiForm';
+import UjianUpdateForm from './pages/ujian/UjianUpdateForm';
 
 import HasilUjian from './pages/laporanUjian/HasilUjian';
 import HasilDetailUjian from './pages/laporanUjian/HasilDetailUjian';
@@ -114,7 +114,8 @@ function App() {
             <Route path="/buat-soal" element={<BuatSoal />} /> {/* Rute untuk soal berdasarkan MateriId */}       
 
             <Route path="/sesi-ujian" element={<SesiUjianListPage />} /> {/* Halaman Daftar Sesi Ujian */}
-            <Route path="/sesi-ujian/form/:id" element={<SesiUjianFormPage />} /> {/* Halaman Formulir Edit Sesi Ujian */}
+            <Route path="/aktivasi-ujian/:id" element={<SesiUjianFormPage />} /> {/* Halaman Formulir Edit Sesi Ujian */}
+            <Route path="/ujian/section/edit/:id" element={<SesiUjianFormPage />} /> {/* Rute untuk form ujian */}
             <Route path="/sesi-ujian/form" element={<SesiUjianFormPage />} /> {/* Halaman Formulir Tambah Sesi Ujian */}
             
             <Route path="/soal/section/:sectionId" element={<SesiSoal />} /> {/* Rute untuk sesi soal ujian */}
@@ -134,8 +135,7 @@ function App() {
             <Route path="/peserta/section/add/:sectionId" element={<TambahSesiPeserta />} /> {/* Rute untuk menambah peserta ke sesi ujian */}
 
             <Route path="/ujian" element={<Ujian />} /> {/* Rute untuk halaman ujian */}
-            <Route path="/ujian/section/edit/:id" element={<UjianAktivasiForm />} /> {/* Rute untuk form ujian */}
-            <Route path="/aktivasi-ujian/:sectionid" element={<UjianAktivasiForm />} /> {/* Rute untuk form ujian */}
+            <Route path="/sesi-ujian/form/:sectionid" element={<UjianUpdateForm />} /> {/* Rute untuk form ujian */}
 
             {/* Rute untuk halaman hasil ujian */}  
             <Route path="/laporan-ujian" element={<LaporanUjian />} /> {/* Rute untuk hasil ujian */}

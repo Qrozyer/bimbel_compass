@@ -4,7 +4,7 @@ import { fetchData, editData } from '../../utils/api';
 import Swal from 'sweetalert2';
 import UjianForm from '../../components/ujian/UjianForm';
 
-const UjianAktivasiForm = () => {
+const UjianUpdateForm = () => {
   const { id, sectionid } = useParams();
   const navigate = useNavigate();
   const [ujianData, setUjianData] = useState(null);
@@ -66,4 +66,4 @@ const UjianAktivasiForm = () => {
   );
 };
 
-export default UjianAktivasiForm;
+export default UjianUpdateForm;

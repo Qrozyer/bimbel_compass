@@ -55,7 +55,7 @@ const UjianForm = ({ initialData, onSave, onCancel }) => {
   return (
     <div className="form-container card rounded-4">
         <div className="card-header bg-dark text-white rounded-top-4">
-            <h3>Aktivasi Ujian</h3>
+            <h3>Ujian Update Form</h3>
         </div>
       <div className="card-body">        
 
