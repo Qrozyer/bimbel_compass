@@ -9,7 +9,7 @@
     "@testing-library/jest-dom": "^6.6.3",
     "@testing-library/react": "^16.3.0",
     "@testing-library/user-event": "^13.5.0",
-    "@tinymce/tinymce-react": "^6.1.0",
+    "@tinymce/tinymce-react": "^6.2.1",
     "admin-lte": "^4.0.0-beta3",
     "axios": "^1.8.4",
     "bootstrap": "^5.3.5",

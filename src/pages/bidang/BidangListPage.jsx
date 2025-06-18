@@ -50,7 +50,7 @@ const BidangListPage = () => {
       <BreadcrumbNavigation paths={breadcrumbPaths} />
 
       <div className="d-flex justify-content-start mb-3">
-            <button className="btn btn-secondary me-2" onClick={() => navigate(-1)}>
+            <button className="btn btn-secondary me-2" onClick={() => navigate('/dashboard')}>
               ← Kembali
             </button>
             <button className="btn btn-success me-2" onClick={() => navigate('/bidang/add')}>

@@ -2,7 +2,7 @@ import React, { useState, useEffect } from 'react';
 import { Editor } from '@tinymce/tinymce-react';
 import Swal from 'sweetalert2';
 import { fetchData } from '../../utils/api';
-import tinymceFullConfig from '../../utils/configTiny'; // import configTiny
+import tinymceFullConfig from '../../utils/configTiny';
 const TINYMCE_API_KEY = process.env.REACT_APP_TINYMCE_API_KEY;
 
 const SoalForm = ({ initialData, onSave, onCancel }) => {

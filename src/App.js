@@ -123,7 +123,6 @@ function App() {
             <Route path="/soal-materi/add/:MateriId" element={<SoalMateriForm />} />
             <Route path="/soal-materi/edit/:MateriId" element={<SoalMateriForm />} /> {/* Rute untuk form sesi soal ujian */}
 
-
             <Route path="/soal-peserta/section/:sectionId" element={<SesiSoalPeserta />} /> {/* Rute untuk sesi soal peserta ujian */}
             <Route path="/peserta/section/:sectionId" element={<SesiujianPeserta />} /> {/* Rute untuk sesi peserta ujian */}
 

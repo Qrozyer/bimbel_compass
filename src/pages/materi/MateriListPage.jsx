@@ -74,6 +74,15 @@ const MateriListPage = () => {
     });
   };
 
+  const handleDetail = (item) => {
+  navigate(`/materi/detail/${item.MateriId}`);
+};
+
+const handleSoal = (item) => {
+  navigate(`/soal/by-materi/${item.MateriId}`);
+};
+
+
   // Filter sub-bidang sesuai bidang yang dipilih
   const filteredSubBidang = selectedBidangId
     ? subBidangList.filter((sb) => sb.BidangId === parseInt(selectedBidangId))
@@ -161,10 +170,13 @@ const MateriListPage = () => {
 </div>
 
           <MateriTable
-            data={filteredMateri}
-            onEdit={(item) => navigate(`/materi/edit/${item.MateriId}`)}
-            onDelete={handleDelete}
-          />
+  data={filteredMateri}
+  onEdit={(item) => navigate(`/materi/edit/${item.MateriId}`)}
+  onDelete={handleDelete}
+  onDetail={handleDetail}
+  onSoal={handleSoal}
+/>
+
         </div>
       </div>
     </div>

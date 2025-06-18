@@ -2,14 +2,14 @@ import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { Editor } from '@tinymce/tinymce-react';
 import { fetchData } from '../../utils/api';
-import tinymceFullConfig from '../../utils/configTiny'; // Import configTiny
+import tinymceFullConfig from '../../utils/configTiny';
 
 const TINYMCE_API_KEY = process.env.REACT_APP_TINYMCE_API_KEY;
 
 const MateriForm = ({ initialData, subIdParam, onSave, onCancel }) => {
   const [MateriJudul, setMateriJudul] = useState(initialData?.MateriJudul || '');
   const [editorData, setEditorData] = useState(initialData?.MateriIsi || '');
-  const [videoUrl, setVideoUrl] = useState(initialData?.MateriVideo || '');
+  const [videoEditorData, setVideoEditorData] = useState(initialData?.MateriVideo || '');
   const [subBidangList, setSubBidangList] = useState([]);
   const [selectedSubBidang, setSelectedSubBidang] = useState(
     subIdParam || initialData?.SubId || ''
@@ -19,7 +19,7 @@ const MateriForm = ({ initialData, subIdParam, onSave, onCancel }) => {
     setSelectedSubBidang(subIdParam || initialData?.SubId || '');
     setMateriJudul(initialData?.MateriJudul || '');
     setEditorData(initialData?.MateriIsi || '');
-    setVideoUrl(initialData?.MateriVideo || '');
+    setVideoEditorData(initialData?.MateriVideo || '');
 
     const fetchSubBidangData = async () => {
       const subBidangData = await fetchData('sub-bidang');
@@ -39,7 +39,7 @@ const MateriForm = ({ initialData, subIdParam, onSave, onCancel }) => {
       MateriJudul,
       MateriIsi: editorData,
       SubId: parseInt(selectedSubBidang),
-      MateriVideo: videoUrl
+      MateriVideo: videoEditorData,
     });
   };
 
@@ -75,13 +75,19 @@ const MateriForm = ({ initialData, subIdParam, onSave, onCancel }) => {
         </div>
 
         <div className="form-group">
-          <label>URL Video</label>
-          <input
-            type="text"
-            className="form-control"
-            value={videoUrl}
-            onChange={(e) => setVideoUrl(e.target.value)}
-            placeholder="example: https://www.youtube.com/embed/xxxxx"
+          <label>Video Materi</label>
+          <Editor
+            apiKey={TINYMCE_API_KEY}
+            value={videoEditorData}
+            init={{
+              ...tinymceFullConfig,
+              height: 200,
+              menubar: false,
+              plugins: [...tinymceFullConfig.plugins, 'media'],
+              toolbar: `${tinymceFullConfig.toolbar} | media`,
+              media_live_embeds: true,
+            }}
+            onEditorChange={(content) => setVideoEditorData(content)}
           />
         </div>
 
@@ -90,7 +96,14 @@ const MateriForm = ({ initialData, subIdParam, onSave, onCancel }) => {
           <Editor
             apiKey={TINYMCE_API_KEY}
             value={editorData}
-            init={{ ...tinymceFullConfig, height: 300, menubar: false }}
+            init={{
+              ...tinymceFullConfig,
+              height: 400,
+              menubar: false,
+              plugins: [...tinymceFullConfig.plugins, 'media'],
+              toolbar: `${tinymceFullConfig.toolbar} | media`,
+              media_live_embeds: true,
+            }}
             onEditorChange={(content) => setEditorData(content)}
           />
         </div>

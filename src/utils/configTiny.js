@@ -34,6 +34,8 @@ import 'tinymce/skins/ui/oxide/skin.min.css';
 
 // config lengkap
 const tinymceFullConfig = {
+  base_url: '/tinymce',
+  suffix: '.min',
   height: 400,
   menubar: true,
   plugins: [
@@ -52,6 +54,9 @@ const tinymceFullConfig = {
   automatic_uploads: true,
   file_picker_types: 'image media',
   media_live_embeds: true,
+  media_alt_source: false,
+  media_poster: false,
+  media_filter_html: false,
   image_caption: true,
   content_style:
     'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
