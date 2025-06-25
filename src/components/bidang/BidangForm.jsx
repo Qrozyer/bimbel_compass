@@ -1,17 +1,19 @@
 import React, { useState, useEffect } from 'react';
 import Swal from 'sweetalert2';
 import { Editor } from '@tinymce/tinymce-react';
-import tinymceFullConfig from '../../utils/configTiny'; // Import configTiny
+import tinymceFullConfig from '../../utils/configTiny';
 
 const TINYMCE_API_KEY = process.env.REACT_APP_TINYMCE_API_KEY;
 
 const BidangForm = ({ initialData, onSave, onCancel }) => {
   const [BidangNama, setBidangNama] = useState(initialData?.BidangNama || '');
   const [editorData, setEditorData] = useState(initialData?.BidangKeterangan || '');
+  const [Tampil, setTampil] = useState(initialData?.Tampil ?? 1); // default: 1 (tampil)
 
   useEffect(() => {
     setBidangNama(initialData?.BidangNama || '');
     setEditorData(initialData?.BidangKeterangan || '');
+    setTampil(initialData?.Tampil ?? 1);
   }, [initialData]);
 
   const handleSave = () => {
@@ -19,7 +21,7 @@ const BidangForm = ({ initialData, onSave, onCancel }) => {
       Swal.fire('Error', 'Semua field harus diisi!', 'error');
       return;
     }
-    onSave({ BidangNama, BidangKeterangan: editorData });
+    onSave({ BidangNama, BidangKeterangan: editorData, Tampil });
   };
 
   return (
@@ -42,9 +44,21 @@ const BidangForm = ({ initialData, onSave, onCancel }) => {
           <Editor
             apiKey={TINYMCE_API_KEY}
             value={editorData}
-            init={{ ...tinymceFullConfig, height: 300, menubar: false }}
+            init={{ ...tinymceFullConfig, height: 300 }}
             onEditorChange={(content) => setEditorData(content)}
           />
+        </div>
+
+        <div className="form-group">
+          <label>Tampil</label>
+          <select
+            className="form-control"
+            value={Tampil}
+            onChange={(e) => setTampil(parseInt(e.target.value))}
+          >
+            <option value={1}>Aktif</option>
+            <option value={0}>Non Aktif</option>
+          </select>
         </div>
 
         <div className="form-group mt-3">

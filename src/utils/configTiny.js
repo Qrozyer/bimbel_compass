@@ -5,7 +5,7 @@ import 'tinymce/tinymce';
 import 'tinymce/themes/silver';
 import 'tinymce/icons/default';
 
-// PLUGINS (import semua yang dibutuhkan)
+// PLUGINS (yang masih support di TinyMCE 7+)
 import 'tinymce/plugins/advlist';
 import 'tinymce/plugins/autolink';
 import 'tinymce/plugins/lists';
@@ -29,10 +29,9 @@ import 'tinymce/plugins/visualchars';
 import 'tinymce/plugins/nonbreaking';
 import 'tinymce/plugins/codesample';
 
-// skin (wajib agar editor tidak kosong tampilannya)
+// skin (agar tampilan editor tidak kosong)
 import 'tinymce/skins/ui/oxide/skin.min.css';
 
-// config lengkap
 const tinymceFullConfig = {
   base_url: '/tinymce',
   suffix: '.min',
@@ -42,15 +41,15 @@ const tinymceFullConfig = {
     'advlist', 'autolink', 'lists', 'link', 'image', 'charmap', 'preview',
     'anchor', 'searchreplace', 'visualblocks', 'code', 'fullscreen',
     'insertdatetime', 'media', 'table', 'help', 'wordcount', 'emoticons',
-    'codesample', 'pagebreak', 'template', 'hr', 'visualchars', 'nonbreaking', 'print'
+    'codesample', 'pagebreak', 'visualchars', 'nonbreaking'
+
   ],
   toolbar:
     'undo redo | blocks fontfamily fontsize | ' +
     'bold italic underline strikethrough forecolor backcolor | ' +
     'alignleft aligncenter alignright alignjustify | ' +
     'bullist numlist outdent indent | link image media emoticons | ' +
-    'table codesample pagebreak template | removeformat preview code fullscreen help',
-
+    'table codesample pagebreak | removeformat preview code fullscreen help',
   automatic_uploads: true,
   file_picker_types: 'image media',
   media_live_embeds: true,
@@ -61,29 +60,6 @@ const tinymceFullConfig = {
   content_style:
     'body { font-family:Helvetica,Arial,sans-serif; font-size:14px }',
 
-  // konfigurasi template
-  template_cdate_format: '[Created on %m/%d/%Y : %H:%M:%S]',
-  template_mdate_format: '[Modified on %m/%d/%Y : %H:%M:%S]',
-  templates: [
-    {
-      title: 'Judul + Paragraf',
-      description: 'Template dengan judul dan paragraf awal',
-      content: '<h2>Judul Artikel</h2><p>Tulis isi artikel di sini...</p>'
-    },
-    {
-      title: 'Dua Kolom',
-      description: 'Template layout dua kolom responsif',
-      content:
-        '<div style="display: flex; gap: 10px;"><div style="flex: 1;">Kolom 1</div><div style="flex: 1;">Kolom 2</div></div>'
-    },
-    {
-      title: 'Peringatan',
-      description: 'Kotak peringatan warna merah',
-      content: '<div style="padding: 10px; background: #fdd; border: 1px solid red;">⚠️ Peringatan penting!</div>'
-    }
-  ],
-
-  // Optional: upload lokal tanpa server
   file_picker_callback: function (callback, value, meta) {
     if (meta.filetype === 'image' || meta.filetype === 'media') {
       const input = document.createElement('input');

@@ -79,7 +79,7 @@ const SubBidangForm = ({ initialData, onSave, onCancel }) => {
           <Editor
             apiKey={TINYMCE_API_KEY}
             value={editorData}
-            init={{ ...tinymceFullConfig, height: 300, menubar: false }}
+            init={{ ...tinymceFullConfig, height: 300 }}
             onEditorChange={handleEditorChange}
           />
         </div>

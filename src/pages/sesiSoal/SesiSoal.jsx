@@ -1,4 +1,3 @@
-// SesiSoal.jsx
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import { fetchData, editData } from '../../utils/api';
@@ -20,9 +19,10 @@ const SesiSoal = () => {
     const fetchSoal = async () => {
       try {
         const data = await fetchData(`soal/list/${sectionId}`);
-        setSoalList(data);
+        setSoalList(Array.isArray(data) ? data : []);
       } catch (error) {
         console.error('Error fetching soal list:', error);
+        setSoalList([]);
       }
     };
     fetchSoal();
@@ -32,9 +32,10 @@ const SesiSoal = () => {
     const fetchSection = async () => {
       try {
         const data = await fetchData(`soal/section/pilih/${sectionId}`);
-        setSectionName(data.SectionNama);
+        setSectionName(data?.SectionNama || 'Tidak Diketahui');
       } catch (error) {
         console.error('Error fetching section:', error);
+        setSectionName('Tidak Diketahui');
       }
     };
     fetchSection();
@@ -77,7 +78,7 @@ const SesiSoal = () => {
 
   const handleSavePoint = async (soal) => {
     try {
-      await editData(`soal/list`, soal.Id, {Point: parseInt(editedPoint) });
+      await editData(`soal/list`, soal.Id, { Point: parseInt(editedPoint) });
       setSoalList(prev =>
         prev.map(s => (s.Id === soal.Id ? { ...s, Point: parseInt(editedPoint) } : s))
       );
@@ -91,11 +92,11 @@ const SesiSoal = () => {
   };
 
   // Pagination
-  const totalItems = soalList.length;
+  const totalItems = soalList?.length || 0;
   const totalPages = Math.ceil(totalItems / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
-  const currentItems = soalList.slice(indexOfFirstItem, indexOfLastItem);
+  const currentItems = soalList?.slice(indexOfFirstItem, indexOfLastItem) || [];
 
   return (
     <div className="container" style={{ margin: '0 auto', paddingTop: '80px', maxWidth: '1000px' }}>
@@ -130,12 +131,11 @@ const SesiSoal = () => {
                   <tr key={soal.SoalId}>
                     <td>{indexOfFirstItem + index + 1}</td>
                     <td dangerouslySetInnerHTML={{ __html: soal.Pertanyaan }} />
-<td dangerouslySetInnerHTML={{ __html: soal.JawabA }} />
-<td dangerouslySetInnerHTML={{ __html: soal.JawabB }} />
-<td dangerouslySetInnerHTML={{ __html: soal.JawabC }} />
-<td dangerouslySetInnerHTML={{ __html: soal.JawabD }} />
-<td dangerouslySetInnerHTML={{ __html: soal.JawabE }} />
-
+                    <td dangerouslySetInnerHTML={{ __html: soal.JawabA }} />
+                    <td dangerouslySetInnerHTML={{ __html: soal.JawabB }} />
+                    <td dangerouslySetInnerHTML={{ __html: soal.JawabC }} />
+                    <td dangerouslySetInnerHTML={{ __html: soal.JawabD }} />
+                    <td dangerouslySetInnerHTML={{ __html: soal.JawabE }} />
                     <td>
                       {editingPointId === soal.Id ? (
                         <div className="d-flex align-items-center gap-1">
@@ -199,7 +199,7 @@ const SesiSoal = () => {
                   <button className="page-link" onClick={() => setCurrentPage(p => Math.max(p - 1, 1))}>&lsaquo;</button>
                 </li>
                 <li className="page-item disabled">
-                  <span className="page-link">Halaman {currentPage} dari {totalPages}</span>
+                  <span className="page-link">Halaman {currentPage} dari {totalPages || 1}</span>
                 </li>
                 <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
                   <button className="page-link" onClick={() => setCurrentPage(p => Math.min(p + 1, totalPages))}>&rsaquo;</button>

@@ -1,7 +1,5 @@
-// src/pages/materi/MateriBySubBidang.jsx
-
 import React, { useEffect, useState } from 'react';
-import { useDispatch, useSelector } from 'react-redux';
+import { useDispatch } from 'react-redux';
 import { setMateri } from '../../actions/materiActions';
 import Swal from 'sweetalert2';
 import { fetchData, deleteData } from '../../utils/api';
@@ -13,36 +11,66 @@ const MateriBySubBidang = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
   const { subId } = useParams();
-  const [BidangId, setBidangId] = useState('');
+
+  const [materiList, setMateriList] = useState([]);
+  const [filteredMateriList, setFilteredMateriList] = useState([]);
   const [subBidangName, setSubBidangName] = useState('');
-  const materi = useSelector((state) => state.materi.materi);
+  const [bidangId, setBidangId] = useState('');
+  const [searchQuery, setSearchQuery] = useState('');
 
   const breadcrumbPaths = [
     { label: 'Dashboard', to: '/dashboard' },
     { label: 'Bidang', to: '/bidang-list' },
-    { label: 'Sub Bidang', to: `/sub-bidang/by-bidang/${BidangId}` },
+    { label: 'Sub Bidang', to: `/sub-bidang/by-bidang/${bidangId}` },
     { label: 'Materi', to: `/materi/by-sub-bidang/${subId}` },
   ];
 
   useEffect(() => {
-    const fetchFilteredMateri = async () => {
-      const data = await fetchData(`materi/filter/${subId}`);
-      if (data) {
-        dispatch(setMateri(data));
-      }
-    };
-
     const fetchSubBidang = async () => {
-      const data = await fetchData(`sub-bidang/pilih/${subId}`);
-      if (data) {
-        setSubBidangName(data.SubNama);
-        setBidangId(data.BidangId);
+      try {
+        const data = await fetchData(`sub-bidang/pilih/${subId}`);
+        if (data) {
+          setSubBidangName(data.SubNama);
+          setBidangId(data.BidangId);
+        } else {
+          setSubBidangName('Sub Bidang tidak ditemukan');
+        }
+      } catch (error) {
+        Swal.fire('Error', 'Gagal mengambil data sub bidang.', 'error');
       }
     };
 
-    fetchFilteredMateri();
+    const fetchFilteredMateri = async () => {
+      try {
+        setMateriList([]);
+        dispatch(setMateri([]));
+
+        const data = await fetchData(`materi/filter/${subId}`);
+        if (Array.isArray(data)) {
+          setMateriList(data);
+          dispatch(setMateri(data));
+        }
+      } catch (error) {
+        Swal.fire('Error', 'Gagal mengambil data materi.', 'error');
+      }
+    };
+
     fetchSubBidang();
+    fetchFilteredMateri();
   }, [dispatch, subId]);
+
+  useEffect(() => {
+    let data = materiList;
+
+    if (searchQuery.trim()) {
+      const lower = searchQuery.toLowerCase();
+      data = data.filter((item) =>
+        item.MateriJudul.toLowerCase().includes(lower)
+      );
+    }
+
+    setFilteredMateriList(data);
+  }, [searchQuery, materiList]);
 
   const handleDelete = async (id) => {
     Swal.fire({
@@ -55,28 +83,26 @@ const MateriBySubBidang = () => {
     }).then(async (result) => {
       if (result.isConfirmed) {
         await deleteData('materi', id);
-        dispatch(setMateri(materi.filter((item) => item.MateriId !== id)));
+        const updated = materiList.filter((item) => item.MateriId !== id);
+        setMateriList(updated);
+        dispatch(setMateri(updated));
         Swal.fire('Terhapus!', 'Data materi telah dihapus.', 'success');
       }
     });
   };
 
   return (
-    <div className="container pt-5" style={{margin: '20 px auto', maxWidth: '1000px' }}>
+    <div className="container pt-5" style={{ maxWidth: '1000px' }}>
       <BreadcrumbNavigation paths={breadcrumbPaths} />
 
       <div className="d-flex justify-content-start mb-3">
-            <button className="btn btn-secondary me-2" onClick={() => navigate(-1)}>
-              ← Kembali
-            </button>
-            <button
-              className="btn btn-success"
-              onClick={() => navigate(`/materi/add/${subId}`)}
-            >
-              + Tambah Data Materi
-            </button>
-          </div>
-
+        <button className="btn btn-secondary me-2" onClick={() => navigate(`/sub-bidang/by-bidang/${bidangId}`)}>
+          ← Kembali
+        </button>
+        <button className="btn btn-success" onClick={() => navigate(`/materi/add/${subId}`)}>
+          + Tambah Data Materi
+        </button>
+      </div>
 
       <div className="card shadow-sm rounded-4">
         <div className="card-header bg-dark text-white rounded-top-4">
@@ -84,9 +110,27 @@ const MateriBySubBidang = () => {
             Daftar Materi dari Sub Bidang: {subBidangName || 'Memuat...'}
           </h5>
         </div>
+
         <div className="card-body">
+          {/* Search Box */}
+          <div className="d-flex flex-column mb-3" style={{ maxWidth: '400px' }}>
+            <label className="form-label">Pencarian Judul Materi:</label>
+            <div className="input-group">
+              <span className="input-group-text">
+                <i className="fas fa-search"></i>
+              </span>
+              <input
+                type="text"
+                className="form-control"
+                placeholder="Cari judul materi..."
+                value={searchQuery}
+                onChange={(e) => setSearchQuery(e.target.value)}
+              />
+            </div>
+          </div>
+
           <MateriTable
-            data={materi}
+            data={filteredMateriList}
             onEdit={(item) => navigate(`/materi/edit/${item.MateriId}`)}
             onDelete={handleDelete}
             onDetail={(item) => navigate(`/materi/detail/${item.MateriId}`)}

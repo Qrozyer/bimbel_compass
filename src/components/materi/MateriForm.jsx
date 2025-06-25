@@ -82,7 +82,6 @@ const MateriForm = ({ initialData, subIdParam, onSave, onCancel }) => {
             init={{
               ...tinymceFullConfig,
               height: 200,
-              menubar: false,
               plugins: [...tinymceFullConfig.plugins, 'media'],
               toolbar: `${tinymceFullConfig.toolbar} | media`,
               media_live_embeds: true,
@@ -99,7 +98,6 @@ const MateriForm = ({ initialData, subIdParam, onSave, onCancel }) => {
             init={{
               ...tinymceFullConfig,
               height: 400,
-              menubar: false,
               plugins: [...tinymceFullConfig.plugins, 'media'],
               toolbar: `${tinymceFullConfig.toolbar} | media`,
               media_live_embeds: true,

@@ -103,7 +103,7 @@ const SoalForm = ({ initialData, onSave, onCancel }) => {
           <Editor
             apiKey={TINYMCE_API_KEY}
             value={editorData.pertanyaan}
-            init={{ ...tinymceFullConfig, height: 200, menubar: false }}
+            init={{ ...tinymceFullConfig, height: 200 }}
             onEditorChange={(content) => handleEditorChange('pertanyaan', content)}
           />
         </div>
@@ -114,7 +114,7 @@ const SoalForm = ({ initialData, onSave, onCancel }) => {
           <Editor
             apiKey={TINYMCE_API_KEY}
             value={editorData.jawabanA}
-            init={{ ...tinymceFullConfig, height: 150, menubar: false }}
+            init={{ ...tinymceFullConfig, height: 150 }}
             onEditorChange={(content) => handleEditorChange('jawabanA', content)}
           />
         </div>
@@ -125,7 +125,7 @@ const SoalForm = ({ initialData, onSave, onCancel }) => {
           <Editor
             apiKey={TINYMCE_API_KEY}
             value={editorData.jawabanB}
-            init={{ ...tinymceFullConfig, height: 150, menubar: false }}
+            init={{ ...tinymceFullConfig, height: 150 }}
             onEditorChange={(content) => handleEditorChange('jawabanB', content)}
           />
         </div>
@@ -136,7 +136,7 @@ const SoalForm = ({ initialData, onSave, onCancel }) => {
           <Editor
             apiKey={TINYMCE_API_KEY}
             value={editorData.jawabanC}
-            init={{ ...tinymceFullConfig, height: 150, menubar: false }}
+            init={{ ...tinymceFullConfig, height: 150 }}
             onEditorChange={(content) => handleEditorChange('jawabanC', content)}
           />
         </div>
@@ -147,7 +147,7 @@ const SoalForm = ({ initialData, onSave, onCancel }) => {
           <Editor
             apiKey={TINYMCE_API_KEY}
             value={editorData.jawabanD}
-            init={{ ...tinymceFullConfig, height: 150, menubar: false }}
+            init={{ ...tinymceFullConfig, height: 150 }}
             onEditorChange={(content) => handleEditorChange('jawabanD', content)}
           />
         </div>
@@ -158,7 +158,7 @@ const SoalForm = ({ initialData, onSave, onCancel }) => {
           <Editor
             apiKey={TINYMCE_API_KEY}
             value={editorData.jawabanE}
-            init={{ ...tinymceFullConfig, height: 150, menubar: false }}
+            init={{ ...tinymceFullConfig, height: 150 }}
             onEditorChange={(content) => handleEditorChange('jawabanE', content)}
           />
         </div>
@@ -180,7 +180,7 @@ const SoalForm = ({ initialData, onSave, onCancel }) => {
           <Editor
             apiKey={TINYMCE_API_KEY}
             value={editorData.pembahasan}
-            init={{ ...tinymceFullConfig, height: 200, menubar: false }}
+            init={{ ...tinymceFullConfig, height: 200 }}
             onEditorChange={(content) => handleEditorChange('pembahasan', content)}
           />
         </div>

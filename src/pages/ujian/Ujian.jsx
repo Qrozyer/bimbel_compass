@@ -26,6 +26,10 @@ const Ujian = () => {
     setCurrentPage(1);
   }, [searchTerm, itemsPerPage]);
 
+  const handleFormEditClick = (id) => {
+  navigate(`/sesi-ujian/form/${id}`);
+};
+
   const handleEditClick = (id) => {
     navigate(`/ujian/section/edit/${id}`);
   };
@@ -120,10 +124,13 @@ const Ujian = () => {
                       </span>
                     </td>
                     <td className="d-flex gap-1">
-                      <button className="btn btn-primary btn-sm" onClick={() => handleEditClick(item.Id)}>
-                        <i className="fas fa-edit"></i> Aktivasi
-                      </button>
-                    </td>
+  <button className="btn btn-warning btn-sm" onClick={() => handleFormEditClick(item.Id)}>
+    <i className="fas fa-pen"></i> Edit
+  </button>
+  <button className="btn btn-primary btn-sm" onClick={() => handleEditClick(item.Id)}>
+    <i className="fas fa-toggle-on"></i> Aktivasi
+  </button>
+</td>
                   </tr>
                 ))
               ) : (

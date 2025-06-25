@@ -168,6 +168,20 @@ const Dashboard = () => {
     </div>
   </div>
 </div>
+
+{/* Card Menu: Ujian Materi */}
+<div className="col">
+  <div
+    className="card text-center h-100 menu-card"
+    onClick={() => navigateTo('/ujian-materi')}
+  >
+    <div className="card-body">
+      <i className="fas fa-book-open fa-3x mb-3"></i>
+      <h5 className="card-title">Ujian Materi</h5>
+    </div>
+  </div>
+</div>
+
       </div>
 
       {/* Menambahkan tag <style> untuk CSS */}

@@ -40,12 +40,12 @@ const BidangFormPage = () => {
     if (newData) {
       dispatch(setBidang(newData));
     }
-    navigate('/');
+    navigate('/bidang-list');
   };
 
   return (
     <div style={{ margin: '20px auto', padding: '20px', maxWidth: '1200px' }}>
-    <BidangForm key={id} initialData={currentBidang} onSave={handleSave} onCancel={() => navigate('/')} />    </div>
+    <BidangForm key={id} initialData={currentBidang} onSave={handleSave} onCancel={() => navigate('/dashboard')} />    </div>
   );
 };
 

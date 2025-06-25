@@ -40,7 +40,7 @@ const MateriFormPage = () => {
     if (newData) {
       dispatch(setMateri(newData));
     }
-    navigate('/materi');
+    navigate(`/materi/by-sub-bidang/${subIdParam}`);
   };
 
   return (

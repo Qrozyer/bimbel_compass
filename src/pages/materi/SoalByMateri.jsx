@@ -1,6 +1,6 @@
 import React, { useEffect, useState } from 'react';
 import { useDispatch, useSelector } from 'react-redux';
-import { setSoal } from '../../actions/soalActions'; // pastikan ada action ini di redux kamu
+import { setSoal } from '../../actions/soalActions';
 import Swal from 'sweetalert2';
 import { fetchData, deleteData } from '../../utils/api';
 import SoalTable from '../../components/soal/SoalTable';
@@ -12,21 +12,23 @@ const SoalByMateri = () => {
   const navigate = useNavigate();
   const { materiId } = useParams();
 
-  const soal = useSelector((state) => state.soal.soal); // pastikan di redux ada state soal.soal
+  const soal = useSelector((state) => state.soal.soal);
   const [materiJudul, setMateriJudul] = useState('');
 
   const breadcrumbPaths = [
     { label: 'Dashboard', to: '/dashboard' },
     { label: 'Bidang', to: '/bidang-list' },
-    { label: 'Sub Bidang', to: '#' }, // Bisa kamu ubah kalau punya data sub bidang
-    { label: 'Materi', to: `/materi/by-sub-bidang/${materiId}` }, // atau sesuaikan url materi
+    { label: 'Sub Bidang', to: '#' },
+    { label: 'Materi', to: `/materi/by-sub-bidang/${materiId}` },
     { label: 'Soal', to: `/soal/by-materi/${materiId}` },
   ];
 
   useEffect(() => {
     const fetchSoalByMateri = async () => {
+      dispatch(setSoal([])); // Kosongkan Redux sebelum fetch baru
+
       const data = await fetchData(`soal/filter/${materiId}`);
-      if (data) {
+      if (Array.isArray(data)) {
         dispatch(setSoal(data));
       }
     };
@@ -40,6 +42,10 @@ const SoalByMateri = () => {
 
     fetchSoalByMateri();
     fetchMateriInfo();
+
+    return () => {
+      dispatch(setSoal([])); // Bersihkan juga saat keluar dari halaman ini
+    };
   }, [dispatch, materiId]);
 
   const handleDelete = async (id) => {
@@ -84,7 +90,6 @@ const SoalByMateri = () => {
             data={soal}
             onEdit={(item) => navigate(`/soal/edit/${item.SoalId}`)}
             onDelete={handleDelete}
-            // Tambahkan props onDetail/onSoal jika ada fitur lain
           />
         </div>
       </div>

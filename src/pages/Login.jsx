@@ -141,10 +141,7 @@ function Login() {
               </div>
             </form>
             <p className="mb-1">
-              <a href="#">I forgot my password</a>
-            </p>
-            <p className="mb-0">
-              <a href="/register" className="text-center">Register</a>
+              <a href="https://wa.me/6282325646503">I forgot my password</a>
             </p>
           </div>
         </div>

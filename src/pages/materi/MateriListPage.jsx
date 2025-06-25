@@ -22,7 +22,7 @@ const MateriListPage = () => {
   const breadcrumbPaths = [
     { label: 'Dashboard', to: '/dashboard' },
     { label: 'Bidang', to: '/bidang-list' },
-    { label: 'Sub Bidang', to: '#' },
+    { label: 'Sub Bidang', to: '/sub-bidang' },
     { label: 'Materi', to: '/materi' },
   ];
 
@@ -94,7 +94,7 @@ const handleSoal = (item) => {
 
       <div className="d-flex justify-content-between align-items-center mb-3">
         <div>
-          <button className="btn btn-secondary me-2" onClick={() => navigate(-1)}>
+          <button className="btn btn-secondary me-2" onClick={() => navigate('/dashboard')}>
             ← Kembali
           </button>
           <button className="btn btn-success" onClick={() => navigate('/materi/add')}>

@@ -18,7 +18,7 @@ const Sidebar = () => {
   return (
     <aside className="main-sidebar sidebar-dark-primary elevation-4">
       <Link to="/" className="brand-link">
-        <span className="brand-text font-weight-light">Bimbel ByPASS</span>
+        <span className="brand-text font-weight-light">Bimbel Kebidanan</span>
       </Link>
 
       <div className="sidebar">
@@ -82,7 +82,7 @@ const Sidebar = () => {
                 <li className="nav-item">
                   <Link to="/peserta-bidang" className="nav-link">
                     <i className="far fa-circle nav-icon"></i>
-                    <p>Tentukan Bidang</p>
+                    <p>Tentukan Bidang Peserta</p>
                   </Link>
                 </li>
                 <li className="nav-item">
@@ -151,6 +151,12 @@ const Sidebar = () => {
                   <Link to="/ujian" className="nav-link">
                     <i className="far fa-circle nav-icon"></i>
                     <p>Daftar Ujian</p>
+                  </Link>
+                </li>
+                <li className="nav-item">
+                  <Link to="/ujian-materi" className="nav-link">
+                    <i className="far fa-circle nav-icon"></i>
+                    <p>Ujian Materi</p>
                   </Link>
                 </li>
                 <li className="nav-item">
