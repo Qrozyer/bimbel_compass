@@ -258,10 +258,10 @@ const SesiSoalForm = () => {
                           <td>
                             <input
                               type="number"
-                              min="0"
+                              min="1"
                               max="10"
                               value={
-                                selectedSoal.find((s) => s.SoalId === soal.SoalId)?.Point || 0
+                                selectedSoal.find((s) => s.SoalId === soal.SoalId)?.Point || 1
                               }
                               disabled={!selectedSoal.some((s) => s.SoalId === soal.SoalId)}
                               onChange={(e) =>

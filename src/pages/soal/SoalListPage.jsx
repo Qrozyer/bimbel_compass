@@ -145,8 +145,9 @@ const SoalListPage = () => {
         <div className="card-body">
           <SoalTable
             data={filteredSoal}
-            onEdit={(item) => navigate(`/soal/edit/${item.SoalId}`)}
+            onEdit={(item) => navigate(`/buat-soal/${item.SoalId}`)}
             onDelete={handleDelete}
+            onDetail={(soal) => navigate(`/detail-soal/${soal.SoalId}`)}
           />
         </div>
       </div>

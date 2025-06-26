@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 
-const SoalTable = ({ data, onEdit, onDelete }) => {
+const SoalTable = ({ data, onEdit, onDelete, onDetail }) => {
   const [searchTerm, setSearchTerm] = useState('');
   const [currentPage, setCurrentPage] = useState(1);
   const [itemsPerPage, setItemsPerPage] = useState(10);
@@ -54,8 +54,6 @@ const SoalTable = ({ data, onEdit, onDelete }) => {
                 <th>Jawaban D</th>
                 <th>Jawaban E</th>
                 <th>Kunci Jawaban</th>
-                <th>Pembahasan</th>
-                <th>Video</th>
                 <th>Aksi</th>
               </tr>
             </thead>
@@ -70,14 +68,15 @@ const SoalTable = ({ data, onEdit, onDelete }) => {
                     <td dangerouslySetInnerHTML={{ __html: item.SoalC }}></td>
                     <td dangerouslySetInnerHTML={{ __html: item.SoalD }}></td>
                     <td dangerouslySetInnerHTML={{ __html: item.SoalE }}></td>
-                    <td>{item.SoalJawaban}</td>
-                    <td dangerouslySetInnerHTML={{ __html: item.SoalPembahasan }}></td>
-                    <td>{item.SoalVideo}</td>
+                    <td dangerouslySetInnerHTML={{ __html: item.SoalJawaban }}></td>
                     <td>
+                      <button className="btn btn-info btn-sm me-1 mb-1" onClick={() => onDetail(item)}>
+                        <i className="fas fa-eye"></i>
+                      </button>
                       <button className="btn btn-warning btn-sm me-1 mb-1" onClick={() => onEdit(item)}>
                         <i className="fas fa-edit"></i>
                       </button>
-                      <button className="btn btn-danger btn-sm" onClick={() => onDelete(item.SoalId)}>
+                      <button className="btn btn-danger btn-sm mb-1" onClick={() => onDelete(item.SoalId)}>
                         <i className="fas fa-trash-alt"></i>
                       </button>
                     </td>
@@ -85,7 +84,7 @@ const SoalTable = ({ data, onEdit, onDelete }) => {
                 ))
               ) : (
                 <tr>
-                  <td colSpan="11" className="text-center">
+                  <td colSpan="9" className="text-center">
                     Tidak ada soal yang cocok.
                   </td>
                 </tr>

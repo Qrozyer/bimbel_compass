@@ -1,6 +1,6 @@
 import React, { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
-import { fetchData, editData } from '../../utils/api';
+import { fetchData, editData, deleteData} from '../../utils/api';
 import Swal from 'sweetalert2';
 import { toast, ToastContainer } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
@@ -45,26 +45,28 @@ const SesiSoal = () => {
     navigate(`/soal-list/${sectionId}`);
   };
 
-  const handleDelete = async (Id) => {
-    const result = await Swal.fire({
-      title: 'Yakin ingin menghapus soal ini?',
-      icon: 'warning',
-      showCancelButton: true,
-      confirmButtonText: 'Hapus',
-      cancelButtonText: 'Batal'
-    });
+const handleDelete = async (Id) => {
+  const result = await Swal.fire({
+    title: 'Yakin ingin menghapus soal ini?',
+    icon: 'warning',
+    showCancelButton: true,
+    confirmButtonText: 'Hapus',
+    cancelButtonText: 'Batal'
+  });
 
-    if (result.isConfirmed) {
-      try {
-        await fetchData(`soal/list/${Id}`, 'DELETE');
+  if (result.isConfirmed) {
+    try {
+      const response = await deleteData('soal/list', Id);
+      if (response) {
         setSoalList(prev => prev.filter(soal => soal.Id !== Id));
         toast.success('Soal berhasil dihapus');
-      } catch (error) {
-        console.error('Error deleting soal:', error);
-        toast.error('Gagal menghapus soal');
       }
+    } catch (error) {
+      console.error('Error deleting soal:', error);
+      toast.error('Gagal menghapus soal');
     }
-  };
+  }
+};
 
   const handleEditPoint = (soal) => {
     setEditingPointId(soal.Id);
