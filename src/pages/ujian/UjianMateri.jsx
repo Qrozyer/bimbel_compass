@@ -61,12 +61,15 @@ const UjianMateri = () => {
   return (
     <div className="container pt-5" style={{ maxWidth: '1200px' }}>
       {/* Tombol Navigasi */}
-      <div className="d-flex justify-content-start align-items-center mb-3">
-        <button className="btn btn-secondary me-2" onClick={() => navigate(-1)}>
+      <div className="d-flex justify-content-start align-items-center mb-3 gap-2 flex-wrap">
+        <button className="btn btn-secondary" onClick={() => navigate(-1)}>
           ← Kembali
         </button>
         <button className="btn btn-success" onClick={() => navigate('/buat-soal')}>
           + Buat Soal Baru
+        </button>
+        <button className="btn btn-primary" onClick={() => navigate('/soal-materi/add')}>
+          🎯 Masukkan Soal ke Materi
         </button>
       </div>
 
@@ -143,11 +146,17 @@ const UjianMateri = () => {
 
         {/* Tabel Soal */}
         <div className="card-body">
-          <SoalTable
-            data={filteredSoal}
-            onEdit={(item) => navigate(`/soal/edit/${item.SoalId}`)}
-            onDelete={handleDelete}
-          />
+          {!selectedBidangId || !selectedSubBidangId || !selectedMateriId ? (
+            <div className="alert alert-info text-center">
+              Silakan pilih <strong>Bidang</strong>, <strong>Sub Bidang</strong>, dan <strong>Materi</strong> untuk melihat soal.
+            </div>
+          ) : (
+            <SoalTable
+              data={filteredSoal}
+              onEdit={(item) => navigate(`/soal/edit/${item.SoalId}`)}
+              onDelete={handleDelete}
+            />
+          )}
         </div>
       </div>
     </div>

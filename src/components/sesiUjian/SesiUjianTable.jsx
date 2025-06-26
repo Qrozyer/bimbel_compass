@@ -15,30 +15,20 @@ const SesiUjianTable = ({ data, onEdit, onDelete }) => {
         item.SectionNama.toLowerCase().includes(searchTerm.toLowerCase())
       );
       setFilteredData(filtered);
-      setCurrentPage(1); // Reset ke halaman pertama setelah filter
+      setCurrentPage(1);
     }
   }, [data, searchTerm]);
 
-  if (!data || !Array.isArray(data)) {
-    return <div>Data kosong</div>;
-  }
+  if (!data || !Array.isArray(data)) return <div>Data kosong</div>;
 
   const totalPages = Math.ceil(filteredData.length / itemsPerPage);
   const indexOfLastItem = currentPage * itemsPerPage;
   const indexOfFirstItem = indexOfLastItem - itemsPerPage;
   const currentItems = filteredData.slice(indexOfFirstItem, indexOfLastItem);
 
-  const goToPeserta = (sectionId) => {
-    navigate(`/peserta/section/${sectionId}`);
-  };
-
-  const goToSoal = (sectionId) => {
-    navigate(`/soal/section/${sectionId}`);
-  };
-
   return (
     <>
-      {/* Search dan Pagination Controls */}
+      {/* Search */}
       <div className="d-flex justify-content-between align-items-center mb-3 flex-wrap gap-2">
         <div className="input-group" style={{ maxWidth: '300px' }}>
           <span className="input-group-text">
@@ -54,6 +44,7 @@ const SesiUjianTable = ({ data, onEdit, onDelete }) => {
         </div>
       </div>
 
+      {/* Table */}
       <div className="table-responsive">
         <table className="table table-bordered table-hover">
           <thead className="table-secondary">
@@ -78,33 +69,49 @@ const SesiUjianTable = ({ data, onEdit, onDelete }) => {
                       <span className="badge bg-danger">Tidak Aktif</span>
                     )}
                   </td>
-                  <td className="d-flex gap-2">
-                    <button
-                      className="btn btn-secondary btn-sm"
-                      onClick={() => goToPeserta(item.SectionId)}
-                    >
-                      <i className="fas fa-eye"></i> Peserta
-                    </button>
-                    <button
-                      className="btn btn-info btn-sm text-white"
-                      onClick={() => goToSoal(item.SectionId)}
-                    >
-                      <i className="fas fa-eye"></i> Soal
-                    </button>
-                    <button
-                      className="btn btn-primary btn-sm"
-                      onClick={() => navigate(`/aktivasi-ujian/${item.SectionId}`)}
-                    >
-                      <i className="fas fa-eye"></i> Aktivasi
-                    </button>
+                  <td>
+                    <div className="d-flex flex-wrap gap-2">
+                      <button
+                        className="btn btn-secondary btn-sm"
+                        onClick={() => navigate(`/peserta/section/${item.SectionId}`)}
+                      >
+                        <i className="fas fa-user"></i> Peserta
+                      </button>
+                      <button
+                        className="btn btn-info btn-sm text-white"
+                        onClick={() => navigate(`/soal/section/${item.SectionId}`)}
+                      >
+                        <i className="fas fa-question-circle"></i> Soal
+                      </button>
+                      <button
+                        className="btn btn-dark btn-sm"
+                        onClick={() => navigate(`/ujian/detail/${item.SectionId}`)}
+                      >
+                        <i className="fas fa-list"></i> Detail
+                      </button>
+                    </div>
                   </td>
                   <td>
-                    <button className="btn btn-warning btn-sm me-2" onClick={() => onEdit(item)}>
-                      <i className="fas fa-edit"></i> Edit
-                    </button>
-                    <button className="btn btn-danger btn-sm" onClick={() => onDelete(item.SectionId)}>
-                      <i className="fas fa-trash-alt"></i> Hapus
-                    </button>
+                    <div className="d-flex flex-wrap gap-2">
+                      <button
+                        className="btn btn-primary btn-sm"
+                        onClick={() => navigate(`/aktivasi-ujian/${item.SectionId}`)}
+                      >
+                        <i className="fas fa-power-off"></i> Aktivasi
+                      </button>
+                      <button
+                        className="btn btn-warning btn-sm"
+                        onClick={() => onEdit(item)}
+                      >
+                        <i className="fas fa-edit"></i> Edit
+                      </button>
+                      <button
+                        className="btn btn-danger btn-sm"
+                        onClick={() => onDelete(item.SectionId)}
+                      >
+                        <i className="fas fa-trash-alt"></i> Hapus
+                      </button>
+                    </div>
                   </td>
                 </tr>
               ))
@@ -121,7 +128,7 @@ const SesiUjianTable = ({ data, onEdit, onDelete }) => {
 
       {/* Pagination */}
       <div className="d-flex justify-content-between align-items-center mt-3 flex-wrap gap-2">
-      <div>
+        <div>
           Tampilkan{' '}
           <select
             className="form-select d-inline-block w-auto"
@@ -144,22 +151,23 @@ const SesiUjianTable = ({ data, onEdit, onDelete }) => {
               </button>
             </li>
             <li className={`page-item ${currentPage === 1 ? 'disabled' : ''}`}>
-              <button className="page-link" onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}>
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage((prev) => Math.max(prev - 1, 1))}
+              >
                 &lsaquo;
               </button>
             </li>
             <li className="page-item disabled">
-                <span className="page-link">
-                  Halaman {currentPage} dari {totalPages}
-                </span>
-              </li>
-            <li className="page-item disabled">
               <span className="page-link">
-                {currentPage}
+                Halaman {currentPage} dari {totalPages}
               </span>
             </li>
             <li className={`page-item ${currentPage === totalPages ? 'disabled' : ''}`}>
-              <button className="page-link" onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}>
+              <button
+                className="page-link"
+                onClick={() => setCurrentPage((prev) => Math.min(prev + 1, totalPages))}
+              >
                 &rsaquo;
               </button>
             </li>

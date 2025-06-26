@@ -8,12 +8,11 @@ const TINYMCE_API_KEY = process.env.REACT_APP_TINYMCE_API_KEY;
 const BidangForm = ({ initialData, onSave, onCancel }) => {
   const [BidangNama, setBidangNama] = useState(initialData?.BidangNama || '');
   const [editorData, setEditorData] = useState(initialData?.BidangKeterangan || '');
-  const [Tampil, setTampil] = useState(initialData?.Tampil ?? 1); // default: 1 (tampil)
+  const Tampil = 1; // Selalu aktif
 
   useEffect(() => {
     setBidangNama(initialData?.BidangNama || '');
     setEditorData(initialData?.BidangKeterangan || '');
-    setTampil(initialData?.Tampil ?? 1);
   }, [initialData]);
 
   const handleSave = () => {
@@ -21,6 +20,7 @@ const BidangForm = ({ initialData, onSave, onCancel }) => {
       Swal.fire('Error', 'Semua field harus diisi!', 'error');
       return;
     }
+
     onSave({ BidangNama, BidangKeterangan: editorData, Tampil });
   };
 
@@ -50,14 +50,9 @@ const BidangForm = ({ initialData, onSave, onCancel }) => {
         </div>
 
         <div className="form-group">
-          <label>Tampil</label>
-          <select
-            className="form-control"
-            value={Tampil}
-            onChange={(e) => setTampil(parseInt(e.target.value))}
-          >
+          <label>Status</label>
+          <select className="form-control" value={1} disabled>
             <option value={1}>Aktif</option>
-            <option value={0}>Non Aktif</option>
           </select>
         </div>
 

@@ -44,7 +44,7 @@ const SesiUjianListPage = () => {
   };
 
   return (
-    <div className="container py-5" style={{ margin: '0 auto', padding: '20px', maxWidth: '1000px' }}>
+    <div className="container py-5" style={{ margin: '0 auto', padding: '20px', maxWidth: '1200px' }}>
       <h1 className="mt-4 mb-4">Daftar Sesi Ujian</h1>
 
       {/* Tombol kembali dan tambah */}

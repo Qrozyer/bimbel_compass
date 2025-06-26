@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useDispatch, useSelector } from 'react-redux'; 
+import { useDispatch, useSelector } from 'react-redux';
 import { setSubBidang } from '../../actions/subBidangActions';
 import Swal from 'sweetalert2';
 import { fetchData, editData, addData } from '../../utils/api';
@@ -9,8 +9,8 @@ import { useNavigate, useParams } from 'react-router-dom';
 const SubBidangFormPage = () => {
   const dispatch = useDispatch();
   const navigate = useNavigate();
-  const { id } = useParams();
-  const subBidang = useSelector((state) => state.subBidang.subBidang); // Ambil data bidang dari Redux
+  const { id, BidangId: bidangIdParam } = useParams(); // ambil BidangId dari param
+  const subBidang = useSelector((state) => state.subBidang.subBidang);
 
   const [currentSubBidang, setCurrentSubBidang] = useState(null);
 
@@ -21,7 +21,7 @@ const SubBidangFormPage = () => {
         if (data) {
           const subBidangToEdit = data.find((item) => item.SubId === parseInt(id));
           setCurrentSubBidang(subBidangToEdit);
-          console.log("Data bidang untuk edit:", subBidangToEdit);
+          console.log("Data sub bidang untuk edit:", subBidangToEdit);
         }
       };
       fetchDataSubBidang();
@@ -36,16 +36,27 @@ const SubBidangFormPage = () => {
       await addData('sub-bidang', data);
       Swal.fire('Success', 'Data berhasil ditambahkan.', 'success');
     }
-    const newData = await fetchData('sub-bidang');
-    if (newData) {
-      dispatch(setSubBidang(newData));
+
+    const updatedData = await fetchData('sub-bidang');
+    if (updatedData) {
+      dispatch(setSubBidang(updatedData));
     }
+
     navigate(`/sub-bidang/by-bidang/${data.BidangId}`);
   };
 
   return (
     <div style={{ margin: '20px auto', padding: '20px', maxWidth: '1200px' }}>
-    <SubBidangForm key={id} initialData={currentSubBidang} onSave={handleSave} onCancel={() => navigate(`/sub-bidang/by-bidang/${currentSubBidang?.BidangId}`)} />    </div>
+      <SubBidangForm
+        key={id}
+        BidangId={bidangIdParam}
+        initialData={currentSubBidang}
+        onSave={handleSave}
+        onCancel={() =>
+          navigate(`/sub-bidang/by-bidang/${currentSubBidang?.BidangId || bidangIdParam}`)
+        }
+      />
+    </div>
   );
 };
 

@@ -50,7 +50,9 @@ import TambahPesertaBidang from './pages/peserta/TambahPesertaBidang';
 import EditPesertaBidang from './pages/peserta/EditPesertaBidang';
 
 import Ujian from './pages/ujian/Ujian';
+import UjianDetail from './pages/ujian/UjianDetail';
 import UjianMateri from './pages/ujian/UjianMateri';
+import UjianMateriForm from './pages/ujian/UjianMateriForm';
 import UjianUpdateForm from './pages/ujian/UjianUpdateForm';
 
 import HasilUjian from './pages/laporanUjian/HasilUjian';
@@ -90,6 +92,7 @@ function App() {
 
             <Route path="/sub-bidang" element={<SubBidangListPage />} />      
             <Route path="/sub-bidang/add" element={<SubBidangFormPage />} />
+            <Route path="/sub-bidang/add/:BidangId" element={<SubBidangFormPage />} />
             <Route path="/sub-bidang/edit/:id" element={<SubBidangFormPage />} />   
             <Route path="/sub-bidang/by-bidang/:bidangId" element={<SubBidangByBidangPage />} />
 
@@ -121,6 +124,7 @@ function App() {
             
             <Route path="/soal/section/:sectionId" element={<SesiSoal />} /> {/* Rute untuk sesi soal ujian */}
             <Route path="/soal-list/:sectionId" element={<SesiSoalForm />} /> {/* Rute untuk form sesi soal ujian */}
+            <Route path="/soal-materi/add" element={<UjianMateriForm />} />
             <Route path="/soal-materi/add/:MateriId" element={<SoalMateriForm />} />
             <Route path="/soal-materi/edit/:MateriId" element={<SoalMateriForm />} /> {/* Rute untuk form sesi soal ujian */}
 
@@ -135,6 +139,7 @@ function App() {
             <Route path="/peserta/section/add/:sectionId" element={<TambahSesiPeserta />} /> {/* Rute untuk menambah peserta ke sesi ujian */}
 
             <Route path="/ujian" element={<Ujian />} /> {/* Rute untuk halaman ujian */}
+            <Route path="/ujian/detail/:id" element={<UjianDetail />} /> {/* Rute untuk detail ujian */}
             <Route path="/ujian-materi" element={<UjianMateri />} /> {/* Rute untuk materi ujian */}
             <Route path="/sesi-ujian/form/:sectionid" element={<UjianUpdateForm />} /> {/* Rute untuk form ujian */}
 

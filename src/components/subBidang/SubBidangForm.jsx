@@ -6,7 +6,7 @@ import tinymceFullConfig from '../../utils/configTiny'; // import configTiny
 
 const TINYMCE_API_KEY = process.env.REACT_APP_TINYMCE_API_KEY;
 
-const SubBidangForm = ({ initialData, onSave, onCancel }) => {
+const SubBidangForm = ({ BidangId, initialData, onSave, onCancel }) => {
   const [SubNama, setSubNama] = useState(String(initialData?.SubNama || ''));
   const [editorData, setEditorData] = useState(String(initialData?.SubKeterangan || ''));
   const [bidangList, setBidangList] = useState([]);
@@ -15,7 +15,7 @@ const SubBidangForm = ({ initialData, onSave, onCancel }) => {
   useEffect(() => {
     setSubNama(String(initialData?.SubNama || ''));
     setEditorData(String(initialData?.SubKeterangan || ''));
-    setSelectedBidang(initialData?.BidangId || '');
+    setSelectedBidang(BidangId || initialData?.BidangId || '');
 
     const fetchBidangData = async () => {
       const bidangData = await fetchData('bidang');

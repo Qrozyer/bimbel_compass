@@ -95,7 +95,7 @@ const SubBidangByBidangPage = () => {
         </button>
         <button
           className="btn btn-success"
-          onClick={() => navigate(`/sub-bidang/add?bidangId=${bidangId}`)}
+          onClick={() => navigate(`/sub-bidang/add/${bidangId}`)}
         >
           + Tambah Sub Bidang
         </button>
